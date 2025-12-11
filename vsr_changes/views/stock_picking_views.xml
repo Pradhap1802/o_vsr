@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add new group for VSR fields in stock.picking form view -->
+        <record id="stock_picking_form_vsr" model="ir.ui.view">
+            <field name="name">stock.picking.form.vsr</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="before">
+                    <group>
+                        <group string="Receipt Information">
+                            <field name="area"/>
+                            <field name="supplier_id"/>
+                            <field name="rate"/>
+                        </group>
+                        <group string="Wastage &amp; Quality">
+                            <field name="wastage"/>
+                            <field name="costing" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Weight Slip"/>
+                    <group>
+                        <field name="weight_slip" widget="image" class="oe_inline" nolabel="1" style="max-width: 500px"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Override validate buttons to rename them as "Next Process" in stock.picking form -->
+        <record id="stock_picking_form_button_vsr" model="ir.ui.view">
+            <field name="name">stock.picking.form.button.vsr</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <!-- Update first validate button (for draft, confirmed states) -->
+                <xpath expr="//header/button[@name='button_validate'][1]" position="attributes">
+                    <attribute name="string">Next Process</attribute>
+                </xpath>
+                <!-- Update second validate button (for waiting, assigned states) -->
+                <xpath expr="//header/button[@name='button_validate'][2]" position="attributes">
+                    <attribute name="string">Next Process</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
