@@ -8,13 +8,7 @@ class StockPickingVSR(models.Model):
     supplier_id = fields.Many2one('res.partner', string='Supplier', help='Supplier information')
     rate = fields.Float(string='Rate', digits=(10, 2), help='Rate per unit')
     wastage = fields.Float(string='Wastage', digits=(10, 2), help='Wastage percentage or amount')
-    costing = fields.Float(string='Costing', digits=(10, 2), compute='_compute_costing', store=True, help='Total costing')
     weight_slip = fields.Image(string='Weight Slip', max_width=1024, max_height=1024, help='Weight slip image')
-
-    @api.depends('rate', 'wastage')
-    def _compute_costing(self):
-        for record in self:
-            record.costing = record.rate + (record.rate * (record.wastage or 0) / 100)
 
     def _update_wastage_from_scrap(self):
         """Update wastage field based on manually entered scrap records"""

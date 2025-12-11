@@ -16,7 +16,6 @@
                         </group>
                         <group string="Wastage &amp; Quality">
                             <field name="wastage"/>
-                            <field name="costing" readonly="1"/>
                         </group>
                     </group>
                     <separator string="Weight Slip" invisible="picking_type_code != 'incoming'"/>
