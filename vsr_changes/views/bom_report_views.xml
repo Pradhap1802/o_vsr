@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Override BOM report template to show only Product, Quantity, and UOM -->
+        <template id="report_mrp_bom_custom" inherit_id="mrp.report_mrp_bom">
+            <!-- Change header title -->
+            <xpath expr="//h1[text()='BoM Overview']" position="replace">
+                <h1>
+                    <t t-if="data.get('operations_count', 0) > 0">Packing Memo</t>
+                    <t t-else="">Production Memo</t>
+                </h1>
+            </xpath>
+            
+            <!-- Add style to hide extra columns and operation rows -->
+            <xpath expr="//div[@class='o_mrp_bom_report_page container py-3 py-lg-5 px-0 bg-view']" position="before">
+                <style>
+                    .o_mrp_bom_expandable thead th:nth-child(n+3),
+                    .o_mrp_bom_expandable tbody td:nth-child(n+3),
+                    .o_mrp_bom_expandable tfoot td:nth-child(n+3) {
+                        display: none;
+                    }
+                </style>
+            </xpath>
+        </template>
+
+        <!-- Hide operation rows in the BOM line template -->
+        <template id="report_mrp_bom_pdf_line_custom" inherit_id="mrp.report_mrp_bom_pdf_line">
+            <xpath expr="//tr" position="attributes">
+                <attribute name="t-if">l['visible'] and l['type'] != 'operation'</attribute>
+            </xpath>
+        </template>
+    </data>
+</odoo>

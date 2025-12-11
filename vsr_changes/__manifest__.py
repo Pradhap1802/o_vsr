@@ -11,10 +11,11 @@
         - Handles wastage deduction from downstream transfers
     ''',
     'author': 'Processdrive',
-    'depends': ['stock', 'sale', 'account'],
+    'depends': ['stock', 'sale', 'account', 'mrp'],
     'data': [
         'views/stock_picking_views.xml',
         'views/stock_move_views.xml',
+        'views/bom_report_views.xml',
     ],
     'installable': True,
     'application': False,
