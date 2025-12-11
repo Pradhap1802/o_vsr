@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Add new group for VSR fields in stock.picking form view -->
+        <!-- Add new group for VSR fields in stock.picking form view - Only for incoming pickings -->
         <record id="stock_picking_form_vsr" model="ir.ui.view">
             <field name="name">stock.picking.form.vsr</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="before">
-                    <group>
+                    <group invisible="picking_type_code != 'incoming'">
                         <group string="Receipt Information">
                             <field name="area"/>
                             <field name="supplier_id"/>
@@ -19,8 +19,8 @@
                             <field name="costing" readonly="1"/>
                         </group>
                     </group>
-                    <separator string="Weight Slip"/>
-                    <group>
+                    <separator string="Weight Slip" invisible="picking_type_code != 'incoming'"/>
+                    <group invisible="picking_type_code != 'incoming'">
                         <field name="weight_slip" widget="image" class="oe_inline" nolabel="1" style="max-width: 500px"/>
                     </group>
                 </xpath>
