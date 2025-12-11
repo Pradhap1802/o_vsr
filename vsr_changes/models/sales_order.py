@@ -73,7 +73,7 @@ class SaleOrderVSR(models.Model):
                 unpaid_total = sum(unpaid_invoices.mapped('amount_residual'))
                 order_numbers = ', '.join(related_orders.mapped('name'))
                 warning_message += f"⚠️ PAYMENT PENDING:\n"
-                warning_message += f"Customer has {unpaid_count} pending invoice(s) totaling {unpaid_total:.2f}\n"
+                warning_message += f"{self.partner_id.name} has {unpaid_count} pending invoice(s) totaling {unpaid_total:.2f}\n"
                 warning_message += f"Related Sales Orders: {order_numbers or 'N/A'}\n\n"
             
             # Create a note in the order for record keeping and raise alert
@@ -82,7 +82,7 @@ class SaleOrderVSR(models.Model):
                 
                 # Raise a UserError with action button
                 raise UserError(
-                    f"⚠️ PAYMENT ISSUE ALERT ⚠️\n\n"
+                    f"⚠️ PAYMENT Pending ⚠️\n\n"
                     f"Customer: {self.partner_id.name}\n\n"
                     f"{warning_message}\n"
                     f"Please verify payment status before proceeding."
