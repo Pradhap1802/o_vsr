@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Rename Scraps button to Wastage in stock.picking form -->
+        <record id="view_picking_form_wastage_label" model="ir.ui.view">
+            <field name="name">stock.picking.form.wastage.label</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <!-- Change Scraps button name to Wastage -->
+                <xpath expr="//button[@name='action_see_move_scrap']" position="attributes">
+                    <attribute name="string">Wastage</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Change Scrap Location to Wastage Location in scrap form view -->
+        <record id="stock_scrap_form_view_wastage" model="ir.ui.view">
+            <field name="name">stock.scrap.form.wastage</field>
+            <field name="model">stock.scrap</field>
+            <field name="inherit_id" ref="stock.stock_scrap_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='scrap_location_id']" position="attributes">
+                    <attribute name="string">Wastage Location</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Change Scrap Location to Wastage Location in scrap form view 2 (popup) -->
+        <record id="stock_scrap_form_view2_wastage" model="ir.ui.view">
+            <field name="name">stock.scrap.form2.wastage</field>
+            <field name="model">stock.scrap</field>
+            <field name="inherit_id" ref="stock.stock_scrap_form_view2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='scrap_location_id']" position="attributes">
+                    <attribute name="string">Wastage Location</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

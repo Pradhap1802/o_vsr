@@ -42,5 +42,17 @@
                 </xpath>
             </field>
         </record>
+
+        <!-- Add Wastage button in header -->
+        <record id="stock_picking_form_wastage_button" model="ir.ui.view">
+            <field name="name">stock.picking.form.wastage.button</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='button_validate'][1]" position="before">
+                    <button name="button_wastage" string="Wastage" type="object" invisible="state not in ('assigned', 'done')"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

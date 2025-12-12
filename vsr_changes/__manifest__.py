@@ -15,6 +15,7 @@
     'data': [
         'views/stock_picking_views.xml',
         'views/stock_move_views.xml',
+        'views/stock_scrap_views.xml',
         'views/bom_report_views.xml',
     ],
     'installable': True,

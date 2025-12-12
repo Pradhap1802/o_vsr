@@ -10,6 +10,29 @@ class StockPickingVSR(models.Model):
     wastage = fields.Float(string='Wastage', digits=(10, 2), help='Wastage percentage or amount')
     weight_slip = fields.Image(string='Weight Slip', max_width=1024, max_height=1024, help='Weight slip image')
 
+    def button_wastage(self):
+        """Open wastage wizard for the picking"""
+        self.ensure_one()
+        view = self.env.ref('stock.stock_scrap_form_view2')
+        products = self.env['product.product']
+        for move in self.move_ids:
+            if move.state not in ('draft', 'cancel') and move.product_id.type in ('product', 'consu'):
+                products |= move.product_id
+        return {
+            'name': 'Wastage',
+            'view_mode': 'form',
+            'res_model': 'stock.scrap',
+            'view_id': view.id,
+            'views': [(view.id, 'form')],
+            'type': 'ir.actions.act_window',
+            'context': {
+                'default_picking_id': self.id,
+                'product_ids': products.ids,
+                'default_company_id': self.company_id.id
+            },
+            'target': 'new',
+        }
+
     def _update_wastage_from_scrap(self):
         """Update wastage field based on manually entered scrap records"""
         for picking in self:
