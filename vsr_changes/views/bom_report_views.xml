@@ -3,23 +3,92 @@
     <data>
         <!-- Override BOM report template to show only Product, Quantity, and UOM -->
         <template id="report_mrp_bom_custom" inherit_id="mrp.report_mrp_bom">
-            <!-- Change header title -->
+            <!-- Add company logo at the top center -->
+            <xpath expr="//div[@class='o_mrp_bom_report_page container py-3 py-lg-5 px-0 bg-view']" position="before">
+                <div class="text-center mb-4" style="margin-top: 20px;">
+                    <img t-if="env.company.logo" t-att-src="image_data_uri(env.company.logo)" 
+                         style="max-height: 100px; max-width: 300px;" 
+                         alt="Company Logo"/>
+                </div>
+            </xpath>
+            
+            <!-- Change header title and move product name outside table -->
             <xpath expr="//h1[text()='BoM Overview']" position="replace">
                 <h1>
                     <t t-if="data.get('operations_count', 0) > 0">Packing Memo</t>
                     <t t-else="">Production Memo</t>
                 </h1>
+                <h4 class="mt-3">Product: <span t-esc="data['name']"/></h4>
+                <h5 t-if="data['bom_code']">Reference: <span t-esc="data['bom_code']"/></h5>
             </xpath>
             
-            <!-- Add style to hide extra columns and operation rows -->
+            <!-- Hide the product name row in header section -->
+            <xpath expr="//div[@class='px-3 mb-5']/h3" position="replace"/>
+            <xpath expr="//div[@class='px-3 mb-5']/hr" position="replace"/>
+            <xpath expr="//div[@class='px-3 mb-5']/h6" position="replace"/>
+            
+            <!-- Add style to show 3 columns and make table format -->
             <xpath expr="//div[@class='o_mrp_bom_report_page container py-3 py-lg-5 px-0 bg-view']" position="before">
                 <style>
-                    .o_mrp_bom_expandable thead th:nth-child(n+3),
-                    .o_mrp_bom_expandable tbody td:nth-child(n+3),
-                    .o_mrp_bom_expandable tfoot td:nth-child(n+3) {
+                    /* Hide columns after Unit (4th column onwards) */
+                    .o_mrp_bom_expandable thead th:nth-child(n+4),
+                    .o_mrp_bom_expandable tbody td:nth-child(n+4),
+                    .o_mrp_bom_expandable tfoot td:nth-child(n+4) {
                         display: none;
                     }
+                    
+                    /* Hide the first row (manufacturing product) */
+                    .o_mrp_bom_expandable tbody tr:first-child {
+                        display: none;
+                    }
+                    
+                    /* Tabular format styling */
+                    .o_mrp_bom_expandable {
+                        border-collapse: collapse;
+                        width: 100%;
+                        border: 1px solid #000 !important;
+                    }
+                    
+                    .o_mrp_bom_expandable thead th {
+                        border: 1px solid #000 !important;
+                        padding: 8px !important;
+                        background-color: #f0f0f0 !important;
+                        font-weight: bold !important;
+                        text-align: center !important;
+                    }
+                    
+                    /* Change Unit column header to center */
+                    .o_mrp_bom_expandable thead th:nth-child(3) {
+                        text-align: center !important;
+                    }
+                    
+                    .o_mrp_bom_expandable tbody td {
+                        border: 1px solid #000 !important;
+                        padding: 6px 8px !important;
+                    }
+                    
+                    .o_mrp_bom_expandable tbody td:first-child {
+                        text-align: left !important;
+                    }
+                    
+                    .o_mrp_bom_expandable tbody td:nth-child(2),
+                    .o_mrp_bom_expandable tbody td:nth-child(3) {
+                        text-align: center !important;
+                    }
+                    
+                    /* Remove indentation for flat table */
+                    .o_mrp_bom_expandable tbody td span[style*="margin-left"] {
+                        margin-left: 0 !important;
+                    }
                 </style>
+            </xpath>
+            
+            <!-- Change Unit header text -->
+            <xpath expr="//thead/tr/th[@class='text-end'][@groups='uom.group_uom']" position="attributes">
+                <attribute name="class">text-center</attribute>
+            </xpath>
+            <xpath expr="//thead/tr/th[@groups='uom.group_uom']" position="replace">
+                <th class="text-center" groups="uom.group_uom">Unit</th>
             </xpath>
         </template>
 
