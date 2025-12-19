@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add Remarks field to Stock Scrap Form View -->
+        <record id="stock_scrap_form_view_inherit_packing_memo" model="ir.ui.view">
+            <field name="name">stock.scrap.form.inherit.packing.memo</field>
+            <field name="model">stock.scrap</field>
+            <field name="inherit_id" ref="stock.stock_scrap_form_view"/>
+            <field name="arch" type="xml">
+                <field name="scrap_reason_tag_ids" position="after">
+                    <field name="scrap_remarks" placeholder="Enter remarks for this scrap/wastage..."/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
