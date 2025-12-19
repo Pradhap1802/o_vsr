@@ -13,6 +13,7 @@
     'author': 'Processdrive',
     'depends': ['stock', 'sale', 'account', 'mrp', 'purchase_stock'],
     'data': [
+        'security/ir.model.access.csv',
         'views/stock_picking_views.xml',
         'views/stock_move_views.xml',
         'views/stock_move_receipt_views.xml',
@@ -20,6 +21,8 @@
         'views/bom_report_views.xml',
         'views/report_receipt_note.xml',
         'views/mrp_views.xml',
+        'wizard/stock_statement_wizard.xml',
+        'views/report_stock_statement.xml',
     ],
     'assets': {
         'web.assets_backend': [
