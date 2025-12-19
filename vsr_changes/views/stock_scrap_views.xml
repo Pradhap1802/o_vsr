@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Rename Scraps button to Wastage in stock.picking form -->
+        <!-- Rename Scraps smart button to Wastage in stock.picking form -->
         <record id="view_picking_form_wastage_label" model="ir.ui.view">
             <field name="name">stock.picking.form.wastage.label</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
-                <!-- Change Scraps button name to Wastage -->
+                <!-- Smart Button -->
                 <xpath expr="//button[@name='action_see_move_scrap']" position="attributes">
                     <attribute name="string">Wastage</attribute>
                 </xpath>
             </field>
+        </record>
+
+        <!-- Rename Action Server (Action Menu) -->
+        <record id="stock.action_scrap" model="ir.actions.server">
+            <field name="name">Wastage</field>
         </record>
 
         <!-- Change Scrap Location to Wastage Location in scrap form view -->
@@ -27,6 +32,7 @@
         </record>
 
         <!-- Change Scrap Location to Wastage Location in scrap form view 2 (popup) -->
+        <!-- Also change 'Scrap Products' button to 'Wastage Products' -->
         <record id="stock_scrap_form_view2_wastage" model="ir.ui.view">
             <field name="name">stock.scrap.form2.wastage</field>
             <field name="model">stock.scrap</field>
@@ -35,7 +41,43 @@
                 <xpath expr="//field[@name='scrap_location_id']" position="attributes">
                     <attribute name="string">Wastage Location</attribute>
                 </xpath>
+                <xpath expr="//button[@name='action_validate']" position="attributes">
+                    <attribute name="string">Wastage Products</attribute>
+                </xpath>
             </field>
+        </record>
+        
+        <!-- Rename Search View -->
+        <record id="stock_scrap_search_view_wastage" model="ir.ui.view">
+             <field name="name">stock.scrap.search.wastage</field>
+             <field name="model">stock.scrap</field>
+             <field name="inherit_id" ref="stock.stock_scrap_search_view"/>
+             <field name="arch" type="xml">
+                 <xpath expr="//search" position="attributes">
+                     <attribute name="string">Search Wastage</attribute>
+                 </xpath>
+                 <xpath expr="//filter[@name='scrap_location']" position="attributes">
+                     <attribute name="string">Wastage Location</attribute>
+                 </xpath>
+             </field>
+        </record>
+
+        <!-- Rename Action Window -->
+        <record id="stock.action_stock_scrap" model="ir.actions.act_window">
+            <field name="name">Wastage Orders</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Wastage products
+              </p><p>
+                Wastage (scrapping) a product will remove it from your stock. The product will
+                end up in a wastage location that can be used for reporting purpose.
+              </p>
+            </field>
+        </record>
+
+        <!-- Rename Menu -->
+         <record id="stock.menu_stock_scrap" model="ir.ui.menu">
+            <field name="name">Wastage</field>
         </record>
     </data>
 </odoo>

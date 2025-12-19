@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Rename Action Server 'Scrap' to 'Wastage' -->
+        <record id="mrp.action_production_order_scrap" model="ir.actions.server">
+            <field name="name">Wastage</field>
+        </record>
+
+        <!-- Rename Smart Button in MRP Production Form -->
+        <record id="mrp_production_form_view_wastage" model="ir.ui.view">
+            <field name="name">mrp.production.form.wastage</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <!-- Replace 'Scraps' text inside the smart button -->
+                <xpath expr="//button[@name='action_see_move_scrap']//span[@class='o_stat_text']" position="replace">
+                    <span class="o_stat_text">Wastage</span>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

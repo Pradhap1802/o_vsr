@@ -19,6 +19,7 @@
         'views/stock_scrap_views.xml',
         'views/bom_report_views.xml',
         'views/report_receipt_note.xml',
+        'views/mrp_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

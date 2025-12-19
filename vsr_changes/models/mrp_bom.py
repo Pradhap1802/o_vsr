@@ -1,5 +1,4 @@
-from odoo import models
-
+from odoo import models, fields
 
 class MrpBomVSR(models.Model):
     _inherit = 'mrp.bom'
@@ -16,3 +15,9 @@ class MrpBomVSR(models.Model):
             data['operations_count'] = operations_count
         
         return data
+
+
+class MrpWorkorderVSR(models.Model):
+    _inherit = 'mrp.workorder'
+
+    consumed_raw_material_qty = fields.Float('Consumed Raw Material Qty')
