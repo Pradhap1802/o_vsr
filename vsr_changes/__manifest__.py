@@ -20,6 +20,11 @@
         'views/bom_report_views.xml',
         'views/report_receipt_note.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'vsr_changes/static/src/xml/chatter_override.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,
