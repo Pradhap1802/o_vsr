@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Report Action -->
+        <record id="action_report_packing_memo" model="ir.actions.report">
+            <field name="name">Packing Memo</field>
+            <field name="model">mrp.production</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">vsr_packing_memo.report_packing_memo_document</field>
+            <field name="report_file">vsr_packing_memo.report_packing_memo_document</field>
+            <field name="print_report_name">'Packing Memo - %s' % object.name</field>
+            <field name="binding_model_id" ref="mrp.model_mrp_production"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Report Template -->
+        <template id="report_packing_memo_document">
+            <t t-call="web.html_container">
+                <div class="page" style="padding: 10px !important; margin: 0 !important;">
+                    <!-- Header with Title and Date -->
+                    <div style="margin: 0; padding: 0; position: relative;">
+                        <h3 style="text-align: center; margin: 0 0 10px 0; padding: 0;">Packing Memo</h3>
+                        <div style="position: absolute; top: 0; right: 0; font-size: 11px;">
+                            <strong>Date:</strong> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
+                        </div>
+                    </div>
+
+                    <!-- Packing Memo Table -->
+                    <style>
+                        @page {
+                            margin: 10mm;
+                        }
+                        .page {
+                            padding: 0 !important;
+                            margin: 0 !important;
+                        }
+                        .packing-memo-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 5px;
+                            font-size: 12px;
+                        }
+                        .packing-memo-table th,
+                        .packing-memo-table td {
+                            border: 1px solid #000;
+                            padding: 6px 8px;
+                            vertical-align: top;
+                        }
+                        .packing-memo-table th {
+                            background-color: #f0f0f0;
+                            font-weight: bold;
+                            text-align: center;
+                            font-size: 11px;
+                        }
+                        .packing-memo-table td.text-center {
+                            text-align: center;
+                        }
+                        .packing-memo-table td.text-right {
+                            text-align: right;
+                        }
+                        .product-name {
+                            font-weight: bold;
+                            font-size: 13px;
+                        }
+                        .raw-material-item {
+                            font-size: 11px;
+                            line-height: 1.4;
+                        }
+                    </style>
+
+                    <table class="packing-memo-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">S.No</th>
+                                <th style="width: 15%;">Name of the pickle</th>
+                                <th style="width: 20%;">Raw materials</th>
+                                <th style="width: 10%;">Accepted</th>
+                                <th style="width: 10%;">Waste/<br/>Defective</th>
+                                <th style="width: 10%;">Total Issued</th>
+                                <th style="width: 12%;">Pickle Issue in kg</th>
+                                <th style="width: 8%;">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loop through all manufacturing orders -->
+                            <t t-foreach="docs" t-as="o">
+                                <t t-set="raw_moves" t-value="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')"/>
+                                
+                                <!-- Row for this manufacturing order -->
+                                <tr>
+                                    <td class="text-center">
+                                        <!-- Serial number for this MO (not for raw materials) -->
+                                        <span t-esc="o_index + 1"/>
+                                    </td>
+                                    <td class="product-name">
+                                        <span t-field="o.product_id.display_name"/>
+                                    </td>
+                                    <td>
+                                        <!-- List all raw materials from BOM -->
+                                        <t t-foreach="raw_moves" t-as="raw_move">
+                                            <t t-set="scrap_for_product" t-value="o.scrap_ids.filtered(lambda s: s.state == 'done' and s.product_id == raw_move.product_id)"/>
+                                            <t t-set="total_scrap_qty" t-value="sum(scrap_for_product.mapped('scrap_qty'))"/>
+                                            
+                                            <div class="raw-material-item">
+                                                <span t-field="raw_move.product_id.display_name"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="not raw_moves">
+                                            <span>-</span>
+                                        </t>
+                                    </td>
+                                    <td class="text-center">
+                                        <!-- Accepted quantities for each raw material -->
+                                        <t t-foreach="raw_moves" t-as="raw_move">
+                                            <div class="raw-material-item">
+                                                <span t-esc="'%.2f' % raw_move.quantity if raw_move.quantity else '0.00'"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="not raw_moves">
+                                            <span>-</span>
+                                        </t>
+                                    </td>
+                                    <td class="text-center">
+                                        <!-- Wastage for each raw material -->
+                                        <t t-foreach="raw_moves" t-as="raw_move">
+                                            <t t-set="scrap_for_product" t-value="o.scrap_ids.filtered(lambda s: s.state == 'done' and s.product_id == raw_move.product_id)"/>
+                                            <t t-set="total_scrap_qty" t-value="sum(scrap_for_product.mapped('scrap_qty'))"/>
+                                            
+                                            <div class="raw-material-item">
+                                                <t t-if="total_scrap_qty > 0">
+                                                    <span t-esc="'%.2f' % total_scrap_qty"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span>-</span>
+                                                </t>
+                                            </div>
+                                        </t>
+                                        <t t-if="not raw_moves">
+                                            <span>-</span>
+                                        </t>
+                                    </td>
+                                    <td class="text-center">
+                                        <!-- Total Issued for each raw material -->
+                                        <t t-foreach="raw_moves" t-as="raw_move">
+                                            <t t-set="scrap_for_product" t-value="o.scrap_ids.filtered(lambda s: s.state == 'done' and s.product_id == raw_move.product_id)"/>
+                                            <t t-set="total_scrap_qty" t-value="sum(scrap_for_product.mapped('scrap_qty'))"/>
+                                            <t t-set="total_issued" t-value="raw_move.quantity + total_scrap_qty"/>
+                                            
+                                            <div class="raw-material-item">
+                                                <span t-esc="'%.2f' % total_issued if total_issued else '0.00'"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="not raw_moves">
+                                            <span>-</span>
+                                        </t>
+                                    </td>
+                                    <td class="text-right">
+                                        <!-- Pickle Issue in kg - Final Product Quantity -->
+                                        <span t-esc="'%.2f' % o.qty_produced if o.qty_produced else '%.2f' % o.product_qty"/>
+                                    </td>
+                                    <td>
+                                        <!-- Remarks from scrap reason tags -->
+                                        <t t-foreach="raw_moves" t-as="raw_move">
+                                            <t t-set="scrap_for_product" t-value="o.scrap_ids.filtered(lambda s: s.state == 'done' and s.product_id == raw_move.product_id)"/>
+                                            
+                                            <div class="raw-material-item">
+                                                <t t-if="scrap_for_product">
+                                                    <t t-foreach="scrap_for_product" t-as="scrap">
+                                                        <t t-if="scrap.scrap_reason_tag_ids">
+                                                            <span t-esc="', '.join(scrap.scrap_reason_tag_ids.mapped('name'))"/>
+                                                        </t>
+                                                        <t t-if="not scrap_last"><br/></t>
+                                                    </t>
+                                                </t>
+                                                <t t-else="">
+                                                    <span></span>
+                                                </t>
+                                            </div>
+                                        </t>
+                                        <t t-if="not raw_moves">
+                                            <span></span>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- Footer Information -->
+                    <div class="row mt-3" style="font-size: 10px; margin-top: 10px;">
+                        <div class="col-12 text-center">
+                            <strong>Total Manufacturing Orders:</strong> <span t-esc="len(docs)"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
+
