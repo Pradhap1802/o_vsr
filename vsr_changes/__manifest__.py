@@ -26,6 +26,7 @@
         'views/mrp_views.xml',
         'wizard/stock_statement_wizard.xml',
         'views/report_stock_statement.xml',
+        'report/mrp_order.xml',
     ],
     'assets': {
         'web.assets_backend': [
