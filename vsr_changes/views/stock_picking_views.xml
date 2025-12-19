@@ -12,7 +12,6 @@
                         <group string="Receipt Information">
                             <field name="area"/>
                             <field name="supplier_id"/>
-                            <field name="rate"/>
                         </group>
                         <group string="Wastage &amp; Quality">
                             <field name="wastage"/>

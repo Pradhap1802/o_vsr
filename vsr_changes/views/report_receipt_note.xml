@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_receipt_note" model="ir.actions.report">
+        <field name="name">Receipt Note</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">vsr_changes.report_receipt_note</field>
+        <field name="report_file">vsr_changes.report_receipt_note</field>
+        <field name="print_report_name">'Receipt Note - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_receipt_note">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-size: 18px;">
+                        <h2>Receipt Note: <span t-field="o.name"/></h2>
+                        
+                        <!-- Header Information: One by one (Stacked Block) -->
+                        <div class="mt32 mb32">
+                            <div class="mb-2">
+                                <strong>Vendor:</strong> <span t-field="o.partner_id.name"/>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Date:</strong> <span t-field="o.scheduled_date"/>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Source:</strong> <span t-field="o.origin"/>
+                            </div>
+                        </div>
+                        
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Rate</th>
+                                    <th class="text-end">Taxes</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.move_ids" t-as="move">
+                                    <td><span t-field="move.product_id"/></td>
+                                    <td class="text-end"><span t-field="move.product_uom_qty"/> <span t-field="move.product_uom"/></td>
+                                    <td class="text-end"><span t-field="move.rate" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/></td>
+                                    <td class="text-end"><span t-field="move.vsr_tax_ids" widget="many2many_tags"/></td>
+                                    <td class="text-end"><span t-field="move.subtotal"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="clearfix">
+                            <div class="row" name="total">
+                                <div class="col-6">
+                                </div>
+                                <div class="col-5 offset-1">
+                                    <table class="table table-sm">
+                                        <!-- Tax Breakdown Loop -->
+                                        <tr t-foreach="o.get_tax_details().items()" t-as="tax_detail" class="border-black o_subtotal">
+                                            <td><span t-esc="tax_detail[0]"/></td>
+                                            <td class="text-end">
+                                                <span t-esc="tax_detail[1]" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                         <tr class="border-black o_total">
+                                            <td><strong>Total</strong></td>
+                                            <td class="text-end">
+                                                 <span t-esc="sum(l.total for l in o.move_ids)" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Authorized Signatory -->
+                        <div class="row mt-5" style="page-break-inside: avoid;">
+                            <div class="col-12 text-end">
+                                <br/><br/><br/>
+                                <strong>Authorized Signatory</strong>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -41,7 +41,7 @@
         </record>
 
         <!-- Override stock.move operations form view to change product_uom_qty field label -->
-        <record id="stock_move_operations_form_custom" model="ir.ui.view">
+        <!-- record id="stock_move_operations_form_custom" model="ir.ui.view">
             <field name="name">stock.move.operations.form.custom</field>
             <field name="model">stock.move</field>
             <field name="inherit_id" ref="stock.view_stock_move_operations"/>
@@ -51,7 +51,7 @@
                     <attribute name="string">Actual Received Quantity</attribute>
                 </xpath>
             </field>
-        </record>
+        </record -->
 
         <!-- Override stock.picking form view to change product_uom_qty in move lines -->
         <record id="stock_picking_form_move_lines_custom" model="ir.ui.view">
