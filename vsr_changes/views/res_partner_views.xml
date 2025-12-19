@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add partner_type field to partner form view -->
+    <record id="view_partner_form_partner_type" model="ir.ui.view">
+        <field name="name">res.partner.form.partner.type</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Add partner_type field after the name field -->
+            <xpath expr="//field[@name='name']" position="after">
+                <label for="partner_type" string="Partner Type" style="font-size: 12px;"/>
+                <field name="partner_type" style="max-width: 150px; font-size: 15px;"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add partner_type field to partner tree/list view -->
+    <record id="view_partner_tree_partner_type" model="ir.ui.view">
+        <field name="name">res.partner.tree.partner.type</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <!-- Add partner_type field after the complete_name field -->
+            <xpath expr="//field[@name='complete_name']" position="after">
+                <field name="partner_type" string="Partner Type" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add filter in search view for partner_type -->
+    <record id="view_res_partner_filter_partner_type" model="ir.ui.view">
+        <field name="name">res.partner.search.partner.type</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='supplier']" position="after">
+                <separator/>
+                <filter string="Vendors" name="filter_vendor" domain="[('partner_type', '=', 'vendor')]"/>
+                <filter string="Customers" name="filter_customer" domain="[('partner_type', '=', 'customer')]"/>
+            </xpath>
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter string="Partner Type" name="group_partner_type" context="{'group_by': 'partner_type'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

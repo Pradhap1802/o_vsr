@@ -11,9 +11,12 @@
         - Handles wastage deduction from downstream transfers
     ''',
     'author': 'Processdrive',
-    'depends': ['stock', 'sale', 'account', 'mrp', 'purchase_stock'],
+    'depends': ['stock', 'sale', 'account','mrp', 'purchase_stock'],
     'data': [
         'security/ir.model.access.csv',
+        'views/res_partner_views.xml',
+        'views/purchase_order_views.xml',
+        'views/sale_order_views.xml',
         'views/stock_picking_views.xml',
         'views/stock_move_views.xml',
         'views/stock_move_receipt_views.xml',
