@@ -5,6 +5,17 @@ from odoo import api, fields, models
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
+    production_type = fields.Selection(
+        [
+            ('packing_memo', 'Packing Memo'),
+            ('production_memo', 'Production Memo'),
+        ],
+        string='Production Type',
+        default='packing_memo',
+        required=True,
+        help='Type of production: Packing Memo or Production Memo'
+    )
+
     packing_memo_remarks = fields.Text(
         string='Packing Memo Remarks',
         help='Additional remarks for the packing memo report'

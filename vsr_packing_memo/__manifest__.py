@@ -17,8 +17,10 @@
     'author': 'Processdrive',
     'depends': ['mrp', 'vsr_changes'],
     'data': [
+        'views/mrp_production_views.xml',
         'views/stock_scrap_views.xml',
         'views/packing_memo_report.xml',
+        'views/production_memo_report.xml',
     ],
     'installable': True,
     'application': False,

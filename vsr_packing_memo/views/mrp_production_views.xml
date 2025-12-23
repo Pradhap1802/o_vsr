@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add Production Type field to Manufacturing Order Form View -->
+        <record id="mrp_production_form_view_inherit_production_type" model="ir.ui.view">
+            <field name="name">mrp.production.form.inherit.production.type</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <!-- Add Production Type field after product_id -->
+                <field name="product_id" position="after">
+                    <field name="production_type" widget="radio" options="{'horizontal': true}"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Add Production Type to Tree View -->
+        <record id="mrp_production_tree_view_inherit_production_type" model="ir.ui.view">
+            <field name="name">mrp.production.tree.inherit.production.type</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="production_type" optional="show"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Add Search Filters for Production Type -->
+        <record id="view_mrp_production_filter_inherit_production_type" model="ir.ui.view">
+            <field name="name">mrp.production.search.inherit.production.type</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+            <field name="arch" type="xml">
+                <!-- Add filters in the filter section -->
+                <filter name="todo" position="after">
+                    <separator/>
+                    <filter string="Packing Memo" name="packing_memo" domain="[('production_type', '=', 'packing_memo')]"/>
+                    <filter string="Production Memo" name="production_memo" domain="[('production_type', '=', 'production_memo')]"/>
+                </filter>
+                
+                <!-- Add group by option -->
+                <filter name="product" position="after">
+                    <filter string="Production Type" name="group_by_production_type" context="{'group_by': 'production_type'}"/>
+                </filter>
+            </field>
+        </record>
+
+        <!-- Create separate menu items for Packing Memo and Production Memo -->
+        <record id="action_mrp_production_packing_memo" model="ir.actions.act_window">
+            <field name="name">Packing Memo Orders</field>
+            <field name="res_model">mrp.production</field>
+            <field name="view_mode">tree,form,kanban,calendar,pivot,graph</field>
+            <field name="domain">[('production_type', '=', 'packing_memo')]</field>
+            <field name="context">{'default_production_type': 'packing_memo'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Packing Memo Manufacturing Order
+                </p>
+            </field>
+        </record>
+
+        <record id="action_mrp_production_production_memo" model="ir.actions.act_window">
+            <field name="name">Production Memo Orders</field>
+            <field name="res_model">mrp.production</field>
+            <field name="view_mode">tree,form,kanban,calendar,pivot,graph</field>
+            <field name="domain">[('production_type', '=', 'production_memo')]</field>
+            <field name="context">{'default_production_type': 'production_memo'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Production Memo Manufacturing Order
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items under Manufacturing -->
+        <menuitem id="menu_mrp_production_packing_memo"
+                  name="Packing Memo Orders"
+                  parent="mrp.menu_mrp_manufacturing"
+                  action="action_mrp_production_packing_memo"
+                  sequence="10"/>
+
+        <menuitem id="menu_mrp_production_production_memo"
+                  name="Production Memo Orders"
+                  parent="mrp.menu_mrp_manufacturing"
+                  action="action_mrp_production_production_memo"
+                  sequence="11"/>
+    </data>
+</odoo>
