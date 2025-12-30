@@ -32,13 +32,14 @@ class MrpProduction(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            # Only generate Memo No for Packing Memo type
-            if vals.get('production_type', 'packing_memo') == 'packing_memo' and vals.get('product_id'):
-                # Find the last sequence number for this product
+            # Generate Memo No only for Production Memo type
+            production_type = vals.get('production_type', 'packing_memo')
+            if production_type == 'production_memo' and vals.get('product_id'):
+                # Find the last sequence number for this product and production type
                 last_record = self.search([
                     ('product_id', '=', vals['product_id']),
                     ('memo_no', '!=', False),
-                    ('production_type', '=', 'packing_memo')
+                    ('production_type', '=', 'production_memo')
                 ], order='memo_no desc', limit=1)
                 vals['memo_no'] = (last_record.memo_no or 0) + 1
         return super().create(vals_list)
