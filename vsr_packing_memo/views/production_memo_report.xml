@@ -16,173 +16,168 @@
         <!-- Report Template for Production Memo -->
         <template id="report_production_memo_document">
             <t t-call="web.html_container">
-                <div class="page" style="padding: 10px !important; margin: 0 !important;">
-                    <!-- Header with Title and Date -->
-                    <div style="margin: 0; padding: 0; position: relative;">
-                        <h3 style="text-align: center; margin: 0 0 10px 0; padding: 0;">Production Memo</h3>
-                        <div style="position: absolute; top: 0; right: 0; font-size: 11px;">
-                            <strong>Date:</strong> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
-                        </div>
-                    </div>
-
-                    <!-- Production Memo Table -->
-                    <style>
-                        @page {
-                                margin: 10mm;
-                        }
-                        .page {
-                            padding: 0 !important;
-                            margin: 0 !important;
-                        }
-                        .production-memo-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-top: 5px;
-                            font-size: 12px;
-                        }
-                        .production-memo-table th,
-                        .production-memo-table td {
-                            border: 1px solid #000;
-                            padding: 6px 8px;
-                            vertical-align: top;
-                        }
-                        .production-memo-table th {
-                            background-color: #f0f0f0;
-                            font-weight: bold;
-                            text-align: center;
-                            font-size: 11px;
-                        }
-                        .production-memo-table td.text-center {
-                            text-align: center;
-                        }
-                        .production-memo-table td.text-right {
-                            text-align: right;
-                        }
-                        .product-name {
-                            font-weight: bold;
-                            font-size: 13px;
-                        }
-                        .raw-material-item {
-                            font-size: 11px;
-                            line-height: 1.4;
-                        }
-                    </style>
-
-                    <table class="production-memo-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 5%;">S.No</th>
-                                <th style="width: 15%;">Product Name</th>
-                                <th style="width: 20%;">Raw Materials</th>
-                                <th style="width: 10%;">Planned Qty</th>
-                                <th style="width: 10%;">Produced Qty</th>
-                                <th style="width: 10%;">Waste/<br/>Defective</th>
-                                <th style="width: 10%;">Total Consumed</th>
-                                <th style="width: 10%;">Status</th>
-                                <th style="width: 10%;">Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Loop through all manufacturing orders -->
-                            <t t-foreach="docs" t-as="o">
-                                <t t-set="raw_moves" t-value="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')"/>
-                                
-                                <!-- Row for this manufacturing order -->
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 12px;">
+                        
+                        <!-- Header Section -->
+                        <div style="margin-bottom: 20px;">
+                            <table style="width: 100%; border: none;">
                                 <tr>
-                                    <td class="text-center">
-                                        <!-- Serial number for this MO -->
-                                        <span t-esc="o_index + 1"/>
+                                    <td style="width: 60%; vertical-align: top; border: none;">
+                                        <table style="width: 100%; border: none; font-size: 11px;">
+                                            <tr>
+                                                <td style="width: 35%; border: none; padding: 2px 0;"><strong>PRODUCT NAME</strong></td>
+                                                <td style="border: none; padding: 2px 0;">: <strong><span t-field="o.product_id.name"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">TIME STARTED</td>
+                                                <td style="border: none; padding: 2px 0;">: _________________</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">TIME END</td>
+                                                <td style="border: none; padding: 2px 0;">: _________________</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">MEMO NO</td>
+                                                <td style="border: none; padding: 2px 0;">: <strong><span t-field="o.memo_no"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">DATE</td>
+                                                <td style="border: none; padding: 2px 0;">: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%b-%y')"/></td>
+                                            </tr>
+                                        </table>
                                     </td>
-                                    <td class="product-name">
-                                        <span t-field="o.product_id.display_name"/>
-                                    </td>
-                                    <td>
-                                        <!-- List all raw materials from BOM -->
-                                        <t t-foreach="raw_moves" t-as="raw_move">
-                                            <div class="raw-material-item">
-                                                <span t-field="raw_move.product_id.display_name"/>
-                                            </div>
-                                        </t>
-                                        <t t-if="not raw_moves">
-                                            <span>-</span>
-                                        </t>
-                                    </td>
-                                    <td class="text-center">
-                                        <!-- Planned quantities for each raw material -->
-                                        <t t-foreach="raw_moves" t-as="raw_move">
-                                            <div class="raw-material-item">
-                                                <span t-esc="'%.2f' % raw_move.product_uom_qty if raw_move.product_uom_qty else '0.00'"/>
-                                            </div>
-                                        </t>
-                                        <t t-if="not raw_moves">
-                                            <span>-</span>
-                                        </t>
-                                    </td>
-                                    <td class="text-center">
-                                        <!-- Produced/consumed quantities for each raw material -->
-                                        <t t-foreach="raw_moves" t-as="raw_move">
-                                            <div class="raw-material-item">
-                                                <span t-esc="'%.2f' % raw_move.quantity if raw_move.quantity else '0.00'"/>
-                                            </div>
-                                        </t>
-                                        <t t-if="not raw_moves">
-                                            <span>-</span>
-                                        </t>
-                                    </td>
-                                    <td class="text-center">
-                                        <!-- Wastage for each raw material -->
-                                        <t t-foreach="raw_moves" t-as="raw_move">
-                                            <t t-set="scrap_for_product" t-value="o.scrap_ids.filtered(lambda s: s.state == 'done' and s.product_id == raw_move.product_id)"/>
-                                            <t t-set="total_scrap_qty" t-value="sum(scrap_for_product.mapped('scrap_qty'))"/>
-                                            
-                                            <div class="raw-material-item">
-                                                <t t-if="total_scrap_qty > 0">
-                                                    <span t-esc="'%.2f' % total_scrap_qty"/>
-                                                </t>
-                                                <t t-else="">
-                                                    <span>-</span>
-                                                </t>
-                                            </div>
-                                        </t>
-                                        <t t-if="not raw_moves">
-                                            <span>-</span>
-                                        </t>
-                                    </td>
-                                    <td class="text-center">
-                                        <!-- Total Consumed for each raw material -->
-                                        <t t-foreach="raw_moves" t-as="raw_move">
-                                            <t t-set="scrap_for_product" t-value="o.scrap_ids.filtered(lambda s: s.state == 'done' and s.product_id == raw_move.product_id)"/>
-                                            <t t-set="total_scrap_qty" t-value="sum(scrap_for_product.mapped('scrap_qty'))"/>
-                                            <t t-set="total_consumed" t-value="raw_move.quantity + total_scrap_qty"/>
-                                            
-                                            <div class="raw-material-item">
-                                                <span t-esc="'%.2f' % total_consumed if total_consumed else '0.00'"/>
-                                            </div>
-                                        </t>
-                                        <t t-if="not raw_moves">
-                                            <span>-</span>
-                                        </t>
-                                    </td>
-                                    <td class="text-center">
-                                        <!-- Production Status -->
-                                        <span t-field="o.state"/>
-                                    </td>
-                                    <td>
-                                        <!-- Remarks -->
-                                        <span t-field="o.packing_memo_remarks"/>
+                                    <td style="width: 40%; text-align: right; vertical-align: top; border: none;">
+                                        <div style="text-align: center;">
+                                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 60px; max-width: 150px; margin-bottom: 5px;" alt="Company Logo"/>
+                                            <h4 style="margin: 5px 0; font-weight: bold; font-size: 14px;">V.S.R AGRO PRODUCTS</h4>
+                                        </div>
                                     </td>
                                 </tr>
-                            </t>
-                        </tbody>
-                    </table>
-
-                    <!-- Footer Information -->
-                    <div class="row mt-3" style="font-size: 10px; margin-top: 10px;">
-                        <div class="col-12 text-center">
-                            <strong>Total Manufacturing Orders:</strong> <span t-esc="len(docs)"/>
+                            </table>
                         </div>
+
+                        <!-- Main Table -->
+                        <style>
+                            .packing-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 10px;
+                                font-size: 11px;
+                            }
+                            .packing-table th, .packing-table td {
+                                border: 2px solid #000;
+                                padding: 6px 4px;
+                                text-align: center;
+                                vertical-align: middle;
+                            }
+                            .packing-table th {
+                                background-color: #e8e8e8;
+                                font-weight: bold;
+                                font-size: 10px;
+                            }
+                            .packing-table td.text-left {
+                                text-align: left;
+                                padding-left: 8px;
+                            }
+                            .packing-table td.text-right {
+                                text-align: right;
+                                padding-right: 8px;
+                            }
+                            .packing-table tr.total-row {
+                                font-weight: bold;
+                                background-color: #f0f0f0;
+                            }
+                        </style>
+
+                        <t t-set="lot_count" t-value="o.no_of_lots if o.no_of_lots > 0 else 1"/>
+                        
+                        <table class="packing-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Sl.No</th>
+                                    <th class="text-left">Ingrideants In Kg</th>
+                                    <!-- Dynamic Lot Columns -->
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <th>Lot <span t-esc="'%02d' % i"/></th>
+                                    </t>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ingredients Rows -->
+                                <t t-set="total_per_lot_sum" t-value="0"/>
+                                <t t-set="grand_total_sum" t-value="0"/>
+                                
+                                <tr t-foreach="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')" t-as="move">
+                                    <td><span t-esc="move_index + 1"/></td>
+                                    <td class="text-left"><span t-field="move.product_id.name"/></td>
+                                    
+                                    <!-- Calculate per lot quantity -->
+                                    <t t-set="qty_per_lot" t-value="move.product_uom_qty / lot_count"/>
+                                    <t t-set="total_per_lot_sum" t-value="total_per_lot_sum + qty_per_lot"/>
+                                    <t t-set="grand_total_sum" t-value="grand_total_sum + move.product_uom_qty"/>
+
+                                    <!-- Repeat per lot quantity for each lot column -->
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.2f' % qty_per_lot"/></td>
+                                    </t>
+                                    
+                                    <!-- Total Column -->
+                                    <td><strong><span t-esc="'%.2f' % move.product_uom_qty"/></strong></td>
+                                </tr>
+                                
+                                <!-- Total Row -->
+                                <tr class="total-row">
+                                    <td colspan="2" class="text-right">Total</td>
+                                    <!-- Dynamic Totals for Lot Columns -->
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.1f' % total_per_lot_sum"/></td>
+                                    </t>
+                                    <td><span t-esc="'%.2f' % grand_total_sum"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Calculate wastage and total production -->
+                        <t t-set="total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
+                        <t t-set="total_net_production" t-value="grand_total_sum - total_wastage"/>
+
+                        <!-- Footer Extra Fields -->
+                        <div class="mt-4">
+                            <!-- Wastage (only if exists) -->
+                            <t t-if="total_wastage > 0">
+                                <div class="row">
+                                    <div class="col-12" style="padding: 5px 0;">
+                                        <strong>Wastage:</strong> <span t-esc="'%.2f' % total_wastage"/> kg
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12" style="padding: 5px 0;">
+                                        <strong>Total Production:</strong> <span t-esc="'%.2f' % total_net_production"/> kg
+                                    </div>
+                                </div>
+                            </t>
+                            
+                            <div class="row">
+                                <div class="col-12" style="border-bottom: 1px dashed #ccc; padding: 5px 0;">
+                                    <strong>Extra Salt :</strong> ___________________________________
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12" style="border-bottom: 1px dashed #ccc; padding: 5px 0;">
+                                    <strong>Extra A A :</strong> ____________________________________
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12" style="padding: 10px 0;">
+                                    <strong>Authorised Signatory:</strong> ___________________________________
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
+                </t>
             </t>
         </template>
     </data>
