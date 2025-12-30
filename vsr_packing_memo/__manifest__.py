@@ -15,12 +15,14 @@
         - Remarks
     ''',
     'author': 'Processdrive',
-    'depends': ['mrp', 'vsr_changes'],
+    'depends': ['mrp', 'vsr_changes', 'quality_control'],
     'data': [
+        'security/ir.model.access.csv',
         'views/mrp_production_views.xml',
         'views/stock_scrap_views.xml',
         'views/packing_memo_report.xml',
         'views/production_memo_report.xml',
+        'views/pickle_analysis_views.xml',
     ],
     'installable': True,
     'application': False,
