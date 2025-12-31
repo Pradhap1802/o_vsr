@@ -18,6 +18,7 @@
     'depends': ['mrp', 'vsr_changes', 'quality_control'],
     'data': [
         'security/ir.model.access.csv',
+        'views/mrp_bom_views.xml',
         'views/mrp_production_views.xml',
         'views/stock_scrap_views.xml',
         'views/packing_memo_report.xml',
