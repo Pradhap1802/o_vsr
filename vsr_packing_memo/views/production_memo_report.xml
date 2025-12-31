@@ -127,38 +127,42 @@
                                     <td><strong><span t-esc="'%.2f' % move.product_uom_qty"/></strong></td>
                                 </tr>
                                 
-                                <!-- Total Row -->
+                                <!-- Total Ingredients Row -->
                                 <tr class="total-row">
-                                    <td colspan="2" class="text-right">Total</td>
+                                    <td colspan="2" class="text-right">Total Ingredients</td>
                                     <!-- Dynamic Totals for Lot Columns -->
                                     <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.1f' % total_per_lot_sum"/></td>
+                                        <td><span t-esc="'%.1f' % (grand_total_sum / lot_count)"/></td>
                                     </t>
                                     <td><span t-esc="'%.2f' % grand_total_sum"/></td>
+                                </tr>
+
+                                <!-- Calculate wastage -->
+                                <t t-set="total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
+                                <t t-set="total_qty_produced" t-value="o.product_qty"/>
+
+                                <!-- Wastage Row -->
+                                <tr>
+                                    <td colspan="2" class="text-right">Less: Wastage</td>
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.2f' % (total_wastage / lot_count) if total_wastage else '0.00'"/></td>
+                                    </t>
+                                    <td><span t-esc="'%.2f' % total_wastage"/></td>
+                                </tr>
+
+                                <!-- Net Production Row -->
+                                <tr class="total-row" style="background-color: #d1e7dd;">
+                                    <td colspan="2" class="text-right">Net Production (Output)</td>
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.2f' % (total_qty_produced / lot_count)"/></td>
+                                    </t>
+                                    <td><span t-esc="'%.2f' % total_qty_produced"/></td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <!-- Calculate wastage and total production -->
-                        <t t-set="total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
-                        <t t-set="total_net_production" t-value="grand_total_sum - total_wastage"/>
-
                         <!-- Footer Extra Fields -->
                         <div class="mt-4">
-                            <!-- Wastage (only if exists) -->
-                            <t t-if="total_wastage > 0">
-                                <div class="row">
-                                    <div class="col-12" style="padding: 5px 0;">
-                                        <strong>Wastage:</strong> <span t-esc="'%.2f' % total_wastage"/> kg
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12" style="padding: 5px 0;">
-                                        <strong>Total Production:</strong> <span t-esc="'%.2f' % total_net_production"/> kg
-                                    </div>
-                                </div>
-                            </t>
-                            
                             <div class="row mt-3">
                                 <div class="col-12" style="padding: 10px 0;">
                                     <strong>Authorised Signatory:</strong> ___________________________________

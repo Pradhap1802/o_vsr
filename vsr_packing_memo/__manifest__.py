@@ -15,7 +15,7 @@
         - Remarks
     ''',
     'author': 'Processdrive',
-    'depends': ['mrp', 'vsr_changes', 'quality_control'],
+    'depends': ['mrp', 'vsr_changes', 'quality_control', 'mrp_account_enterprise'],
     'data': [
         'security/ir.model.access.csv',
         'views/mrp_bom_views.xml',

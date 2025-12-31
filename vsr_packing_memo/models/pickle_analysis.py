@@ -12,6 +12,17 @@ class PickleAnalysis(models.Model):
     factor_acidity = fields.Float(string='Factor: Acidity', digits=(16, 4), default=0.6)
     salt_factor = fields.Float(string='Salt Factor', digits=(16, 4), default=2.9225)
     date = fields.Date(string='Date', required=True, default=fields.Date.context_today)
+    production_id = fields.Many2one('mrp.production', string='Manufacturing Order', help='Link to manufacturing order for automatic quality updates')
+    
+    # Quality Attributes
+    taste = fields.Char(string='Taste', help='Taste of the product')
+    texture = fields.Char(string='Texture', help='Texture of the product (e.g., Crunchy, Soft)')
+    color = fields.Char(string='Colour', help='Color of the product')
+    smell = fields.Char(string='Smell/Odour', help='Smell or aroma of the product')
+    overall_acceptability = fields.Selection([
+        ('pass', 'Pass'),
+        ('fail', 'Fail'),
+    ], string='Overall Quality', default='pass')
     
     # Analysis Lines
     line_ids = fields.One2many('pickle.analysis.line', 'analysis_id', string='Analysis Lines')

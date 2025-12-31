@@ -48,9 +48,22 @@
                             <group>
                                 <field name="date"/>
                                 <field name="factor_acidity"/>
+                                <field name="production_id"/>
                             </group>
                             <group>
                                 <field name="salt_factor"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Quality Attributes">
+                            <group>
+                                <field name="taste"/>
+                                <field name="texture"/>
+                                <field name="color"/>
+                            </group>
+                            <group>
+                                <field name="smell"/>
+                                <field name="overall_acceptability"/>
                             </group>
                         </group>
                         
@@ -176,6 +189,36 @@
                                     <td style="width: 10%; padding: 3px; border: 1px solid black; font-weight: bold;">Date:</td>
                                     <td style="width: 22%; padding: 3px; border: 1px solid black;"><span t-field="o.date"/></td>
                                 </tr>
+                            </table>
+
+                            <!-- Quality Attributes Section -->
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                                <thead>
+                                    <tr style="background-color: #e8e8e8;">
+                                        <th colspan="5" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 10px; font-weight: bold;">Quality Attributes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 20%; padding: 3px; border: 1px solid black; font-weight: bold;">Taste:</td>
+                                        <td style="width: 30%; padding: 3px; border: 1px solid black;"><span t-field="o.taste"/></td>
+                                        <td style="width: 20%; padding: 3px; border: 1px solid black; font-weight: bold;">Texture:</td>
+                                        <td style="width: 30%; padding: 3px; border: 1px solid black;"><span t-field="o.texture"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Colour:</td>
+                                        <td style="padding: 3px; border: 1px solid black;"><span t-field="o.color"/></td>
+                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Smell/Odour:</td>
+                                        <td style="padding: 3px; border: 1px solid black;"><span t-field="o.smell"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Overall Quality:</td>
+                                        <td colspan="3" style="padding: 3px; border: 1px solid black;">
+                                            <span t-if="o.overall_acceptability == 'pass'" style="color: green; font-weight: bold;">✓ Pass</span>
+                                            <span t-if="o.overall_acceptability == 'fail'" style="color: red; font-weight: bold;">✗ Fail</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
 
                             <!-- Main Analysis Table -->

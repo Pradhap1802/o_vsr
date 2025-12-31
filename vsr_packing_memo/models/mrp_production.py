@@ -93,6 +93,7 @@ class MrpProduction(models.Model):
     total_raw_materials_issued = fields.Float(
         string='Total Raw Materials Issued',
         compute='_compute_total_raw_materials_issued',
+        store=True,
         help='Total quantity of raw materials consumed in this manufacturing order'
     )
 
@@ -108,5 +109,6 @@ class MrpProduction(models.Model):
     total_wastage = fields.Float(
         string='Total Wastage/Defectives',
         compute='_compute_total_wastage',
+        store=True,
         help='Total quantity scrapped/wasted in this manufacturing order'
     )

@@ -88,5 +88,33 @@
                   parent="mrp.menu_mrp_manufacturing"
                   action="action_mrp_production_production_memo"
                   sequence="11"/>
+
+        <!-- Create a Pivot View (since inheritance failed) -->
+        <record id="view_mrp_production_pivot_wastage" model="ir.ui.view">
+            <field name="name">mrp.production.pivot.wastage</field>
+            <field name="model">mrp.production</field>
+            <field name="arch" type="xml">
+                <pivot string="Manufacturing Orders">
+                    <field name="date_start" type="row" interval="month"/>
+                    <field name="product_id" type="row"/>
+                    <field name="product_qty" type="measure"/>
+                    <field name="total_wastage" type="measure"/>
+                    <field name="total_raw_materials_issued" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Use existing graph view inheritance - FAILED, creating new one -->
+        <record id="view_mrp_production_graph_wastage" model="ir.ui.view">
+            <field name="name">mrp.production.graph.wastage</field>
+            <field name="model">mrp.production</field>
+            <field name="arch" type="xml">
+                <graph string="Manufacturing Orders">
+                    <field name="date_start"/>
+                    <field name="product_qty" type="measure"/>
+                    <field name="total_wastage" type="measure"/>
+                </graph>
+            </field>
+        </record>
     </data>
 </odoo>
