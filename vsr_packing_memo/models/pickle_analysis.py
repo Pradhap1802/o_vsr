@@ -12,7 +12,6 @@ class PickleAnalysis(models.Model):
     factor_acidity = fields.Float(string='Factor: Acidity', digits=(16, 4), default=0.6)
     salt_factor = fields.Float(string='Salt Factor', digits=(16, 4), default=2.9225)
     date = fields.Date(string='Date', required=True, default=fields.Date.context_today)
-    production_id = fields.Many2one('mrp.production', string='Manufacturing Order', help='Link to manufacturing order for automatic quality updates')
     
     # Quality Attributes
     taste = fields.Char(string='Taste', help='Taste of the product')

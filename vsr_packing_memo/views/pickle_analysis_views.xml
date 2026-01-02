@@ -48,7 +48,6 @@
                             <group>
                                 <field name="date"/>
                                 <field name="factor_acidity"/>
-                                <field name="production_id"/>
                             </group>
                             <group>
                                 <field name="salt_factor"/>
