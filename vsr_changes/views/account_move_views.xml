@@ -37,4 +37,18 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Add vehicle and delivery fields to invoice form -->
+    <record id="view_move_form_vsr" model="ir.ui.view">
+        <field name="name">account.move.form.vsr</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_date']" position="after">
+                <field name="vsr_vehicle_number"/>
+                <field name="delivery_number"/>
+                <field name="destination"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

@@ -11,7 +11,7 @@
         - Handles wastage deduction from downstream transfers
     ''',
     'author': 'Processdrive',
-    'depends': ['stock', 'sale', 'account','mrp', 'purchase_stock'],
+    'depends': ['stock', 'sale', 'account', 'mrp', 'purchase_stock', 'l10n_in_edi_ewaybill'],
     'data': [
         'security/ir.model.access.csv',
         'views/res_partner_views.xml',
