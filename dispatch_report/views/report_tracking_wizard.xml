@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_order_tracking_wizard" model="ir.ui.view">
+    <field name="name">order.tracking.wizard.form</field>
+    <field name="model">order.tracking.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Order Tracking Report">
+        <group>
+          <field name="date_from"/>
+          <field name="date_to"/>
+          <field name="state"/>
+        </group>
+
+        <footer>
+          <button name="action_print_report"
+                  type="object"
+                  string="Print"
+                  class="btn-primary"/>
+          <button string="Cancel"
+                  special="cancel"
+                  class="btn-secondary"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_order_tracking_wizard" model="ir.actions.act_window">
+    <field name="name">Order Tracking Report</field>
+    <field name="res_model">order.tracking.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem
+    id="dispatch_report_menu"
+    name="dispatch report"
+    parent="sale.sale_menu_root"
+    sequence="10"/>
+</odoo>
