@@ -6,9 +6,29 @@ class StockPickingVSR(models.Model):
 
     area = fields.Char(string='Area', help='Area of the purchase receipt')
     supplier_id = fields.Many2one('res.partner', string='Supplier', help='Supplier information')
-    rate = fields.Float(string='Rate', digits=(10, 2), help='Rate per unit')
     wastage = fields.Float(string='Wastage', digits=(10, 2), help='Wastage percentage or amount')
     weight_slip = fields.Image(string='Weight Slip', max_width=1024, max_height=1024, help='Weight slip image')
+
+    def get_tax_details(self):
+        """Compute tax breakdown for the receipt"""
+        tax_data = {}
+        for move in self.move_ids:
+            if move.vsr_tax_ids and move.subtotal:
+                taxes = move.vsr_tax_ids.compute_all(
+                    move.rate,
+                    currency=move.currency_id,
+                    quantity=move.product_uom_qty,
+                    product=move.product_id,
+                    partner=move.picking_id.partner_id
+                )
+                for tax_line in taxes['taxes']:
+                    tax_name = tax_line['name']
+                    amount = tax_line['amount']
+                    if tax_name in tax_data:
+                        tax_data[tax_name] += amount
+                    else:
+                        tax_data[tax_name] = amount
+        return tax_data
 
     def button_wastage(self):
         """Open wastage wizard for the picking"""

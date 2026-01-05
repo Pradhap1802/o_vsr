@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add columns to Stock Move Tree View (Operations) - REMOVED generic tree view mod to avoid parent issues -->
+        <!-- record id="view_stock_move_receipt_tree_vsr" model="ir.ui.view">
+            <field name="name">stock.move.receipt.tree.vsr</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom_qty']" position="after">
+                    <field name="rate" />
+                    <field name="vsr_tax_ids" widget="many2many_tags" />
+                    <field name="subtotal" />
+                    <field name="tax_amount" />
+                    <field name="total" />
+                </xpath>
+            </field>
+        </record -->
+
+        <!-- Add fields to Stock Move Form View - COMMENTED OUT as per user feedback (wants lines only) -->
+        <!-- record id="view_stock_move_receipt_form_vsr" model="ir.ui.view">
+            <field name="name">stock.move.receipt.form.vsr</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_grp']" position="after">
+                    <group string="Pricing Information" name="pricing_info">
+                        <group>
+                            <field name="rate"/>
+                            <field name="vsr_tax_ids" widget="many2many_tags"/>
+                            <field name="subtotal"/>
+                        </group>
+                        <group>
+                            <field name="tax_amount"/>
+                            <field name="total"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record -->
+        
+        <!-- Also apply to the picking operations tree view -->
+        <record id="view_picking_move_receipt_tree_vsr" model="ir.ui.view">
+            <field name="name">stock.picking.move.tree.vsr</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_picking_move_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="rate"/>
+                    <field name="vsr_tax_ids" widget="many2many_tags"/>
+                    <field name="subtotal"/>
+                    <field name="tax_amount"/>
+                    <field name="total"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

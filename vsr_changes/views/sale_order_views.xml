@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add domain filter to Sale Order partner field -->
+    <record id="view_sale_order_form_partner_domain" model="ir.ui.view">
+        <field name="name">sale.order.form.partner.domain</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Add domain to partner_id field to show only customers -->
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('partner_type', '=', 'customer')]</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

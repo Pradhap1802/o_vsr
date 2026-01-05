@@ -1,0 +1,58 @@
+<odoo>
+    <data>
+    <record id="action_report_stock_statement" model="ir.actions.report">
+        <field name="name">Stock Statement Report</field>
+        <field name="model">vsr.stock.statement.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">vsr_changes.report_stock_statement</field>
+        <field name="report_file">vsr_changes.report_stock_statement</field>
+        <field name="binding_model_id" ref="model_vsr_stock_statement_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_stock_statement">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2 class="text-center">Stock Statement Report</h2>
+                    <h5 class="text-center">
+                        <span t-esc="date_start"/> to <span t-esc="date_end"/>
+                    </h5>
+                    
+                    <table class="table table-sm table-bordered mt-4">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Products</th>
+                                <th class="text-end">Receipt</th>
+                                <th class="text-end">Opening Stock</th>
+                                <th class="text-end">Total</th>
+                                <th class="text-end">Issued</th>
+                                <th class="text-end">Closing Stock</th>
+                                <th class="text-end">Physical</th>
+                                <th class="text-end">Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="lines" t-as="category">
+                                <tr class="bg-200">
+                                    <td colspan="8" class="fw-bold text-start" style="background-color: #e9ecef;"><span t-esc="category"/></td>
+                                </tr>
+                                <tr t-foreach="lines[category]" t-as="line">
+                                    <td class="ps-4"><span t-esc="line.get('name')"/></td>
+                                    <td class="text-end"><t t-if="line.get('receipt') == 0">-</t><t t-else=""><span t-esc="line.get('receipt')" t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                    <td class="text-end"><t t-if="line.get('opening') == 0">-</t><t t-else=""><span t-esc="line.get('opening')" t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                    <td class="text-end"><t t-if="line.get('total') == 0">-</t><t t-else=""><span t-esc="line.get('total')" t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                    <td class="text-end"><t t-if="line.get('issue') == 0">-</t><t t-else=""><span t-esc="line.get('issue')" t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                    <td class="text-end"><t t-if="line.get('closing') == 0">-</t><t t-else=""><span t-esc="line.get('closing')" t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                    <td class="text-end"><t t-if="line.get('physical') == 0">-</t><t t-else=""><span t-esc="line.get('physical')" t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                    <td class="text-end"><t t-if="line.get('difference') == 0">-</t><t t-else=""><span t-esc="line.get('difference')" t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+    </data>
+</odoo>

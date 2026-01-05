@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+    <record id="view_stock_statement_wizard_form" model="ir.ui.view">
+        <field name="name">vsr.stock.statement.wizard.form</field>
+        <field name="model">vsr.stock.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Stock Statement Report">
+                <group>
+                    <group>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                    </group>
+                    <group>
+                        <field name="company_id" invisible="1"/>
+                        <field name="category_ids" widget="many2many_tags"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_report" string="Print" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_statement_wizard" model="ir.actions.act_window">
+        <field name="name">Stock Statement</field>
+        <field name="res_model">vsr.stock.statement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_stock_statement_report" 
+              name="Stock Statement"
+              parent="stock.menu_warehouse_report" 
+              action="action_stock_statement_wizard" 
+              sequence="100"/>
+    </data>
+</odoo>

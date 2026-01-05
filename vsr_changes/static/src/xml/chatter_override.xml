@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.Chatter" t-inherit-mode="extension">
+        <xpath expr="//button[contains(@class, 'o-mail-Chatter-logNote')]" position="replace">
+            <button class="o-mail-Chatter-logNote btn text-nowrap me-1" t-att-class="{
+                        'btn-primary active': state.composerType === 'note',
+                        'btn-secondary': state.composerType !== 'note',
+                        'my-2': !props.compactHeight
+                    }" t-att-disabled="!state.thread.hasWriteAccess and !(state.thread.hasReadAccess and state.thread.canPostOnReadonly) and props.threadId" data-hotkey="shift+m" t-on-click="() => this.toggleComposer('note')">
+                Remarks
+            </button>
+        </xpath>
+    </t>
+</templates>
