@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pickle_analysis_user,pickle.analysis.user,model_pickle_analysis,base.group_user,1,1,1,1
+access_pickle_analysis_line_user,pickle.analysis.line.user,model_pickle_analysis_line,base.group_user,1,1,1,1

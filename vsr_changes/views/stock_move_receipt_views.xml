@@ -39,17 +39,31 @@
             </field>
         </record -->
         
-        <!-- Also apply to the picking operations tree view -->
-        <record id="view_picking_move_receipt_tree_vsr" model="ir.ui.view">
-            <field name="name">stock.picking.move.tree.vsr</field>
-            <field name="model">stock.move</field>
-            <field name="inherit_id" ref="stock.view_picking_move_tree"/>
+        
+        <!-- Modify the inline list in stock picking form view to add financial fields -->
+        <record id="view_picking_form_vsr_financial" model="ir.ui.view">
+            <field name="name">stock.picking.form.vsr.financial</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='product_id']" position="after">
+                <!-- Add vendor address after partner_id field -->
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <div class="o_address_format" invisible="not partner_id">
+                        <field name="partner_id" invisible="1"/>
+                        <div class="o_row">
+                            <field name="partner_id" invisible="1" context="{'show_address': 1}" widget="contact" options="{'always_reload': True, 'highlight_first_line': True}"/>
+                        </div>
+                    </div>
+                </xpath>
+                
+                <!-- Add Rate and Taxes after product_uom_qty (Demand) -->
+                <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='product_uom_qty']" position="after">
                     <field name="rate"/>
                     <field name="vsr_tax_ids" widget="many2many_tags"/>
-                    <field name="subtotal"/>
-                    <field name="tax_amount"/>
+                </xpath>
+                
+                <!-- Add Total after product_uom (Unit) -->
+                <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='product_uom'][@groups='uom.group_uom']" position="after">
                     <field name="total"/>
                 </xpath>
             </field>

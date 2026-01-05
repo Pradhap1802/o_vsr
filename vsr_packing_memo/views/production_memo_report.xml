@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Report Action for Production Memo -->
+        <record id="action_report_production_memo" model="ir.actions.report">
+            <field name="name">Production Memo</field>
+            <field name="model">mrp.production</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">vsr_packing_memo.report_production_memo_document</field>
+            <field name="report_file">vsr_packing_memo.report_production_memo_document</field>
+            <field name="print_report_name">'Production Memo - %s' % object.name</field>
+            <field name="binding_model_id" ref="mrp.model_mrp_production"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Report Template for Production Memo -->
+        <template id="report_production_memo_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 12px;">
+                        
+                        <!-- Header Section -->
+                        <div style="margin-bottom: 20px;">
+                            <table style="width: 100%; border: none;">
+                                <tr>
+                                    <td style="width: 60%; vertical-align: top; border: none;">
+                                        <table style="width: 100%; border: none; font-size: 11px;">
+                                            <tr>
+                                                <td style="width: 35%; border: none; padding: 2px 0;"><strong>PRODUCT NAME</strong></td>
+                                                <td style="border: none; padding: 2px 0;">: <strong><span t-field="o.product_id.name"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">TIME STARTED</td>
+                                                <td style="border: none; padding: 2px 0;">: _________________</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">TIME END</td>
+                                                <td style="border: none; padding: 2px 0;">: _________________</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">MEMO NO</td>
+                                                <td style="border: none; padding: 2px 0;">: <strong><span t-field="o.memo_no"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: none; padding: 2px 0;">DATE</td>
+                                                <td style="border: none; padding: 2px 0;">: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%b-%y')"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="width: 40%; text-align: right; vertical-align: top; border: none;">
+                                        <div style="text-align: center;">
+                                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 60px; max-width: 150px; margin-bottom: 5px;" alt="Company Logo"/>
+                                            <h4 style="margin: 5px 0; font-weight: bold; font-size: 14px;">V.S.R AGRO PRODUCTS</h4>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Main Table -->
+                        <style>
+                            .packing-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 10px;
+                                font-size: 11px;
+                            }
+                            .packing-table th, .packing-table td {
+                                border: 2px solid #000;
+                                padding: 6px 4px;
+                                text-align: center;
+                                vertical-align: middle;
+                            }
+                            .packing-table th {
+                                background-color: #e8e8e8;
+                                font-weight: bold;
+                                font-size: 10px;
+                            }
+                            .packing-table td.text-left {
+                                text-align: left;
+                                padding-left: 8px;
+                            }
+                            .packing-table td.text-right {
+                                text-align: right;
+                                padding-right: 8px;
+                            }
+                            .packing-table tr.total-row {
+                                font-weight: bold;
+                                background-color: #f0f0f0;
+                            }
+                        </style>
+
+                        <t t-set="lot_count" t-value="o.no_of_lots if o.no_of_lots > 0 else 1"/>
+                        
+                        <table class="packing-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Sl.No</th>
+                                    <th class="text-left">Ingrideants In Kg</th>
+                                    <!-- Dynamic Lot Columns -->
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <th>Lot <span t-esc="'%02d' % i"/></th>
+                                    </t>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ingredients Rows -->
+                                <t t-set="total_per_lot_sum" t-value="0"/>
+                                <t t-set="grand_total_sum" t-value="0"/>
+                                
+                                <tr t-foreach="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')" t-as="move">
+                                    <td><span t-esc="move_index + 1"/></td>
+                                    <td class="text-left"><span t-field="move.product_id.name"/></td>
+                                    
+                                    <!-- Calculate per lot quantity -->
+                                    <t t-set="qty_per_lot" t-value="move.product_uom_qty / lot_count"/>
+                                    <t t-set="total_per_lot_sum" t-value="total_per_lot_sum + qty_per_lot"/>
+                                    <t t-set="grand_total_sum" t-value="grand_total_sum + move.product_uom_qty"/>
+
+                                    <!-- Repeat per lot quantity for each lot column -->
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.2f' % qty_per_lot"/></td>
+                                    </t>
+                                    
+                                    <!-- Total Column -->
+                                    <td><strong><span t-esc="'%.2f' % move.product_uom_qty"/></strong></td>
+                                </tr>
+                                
+                                <!-- Total Ingredients Row -->
+                                <tr class="total-row">
+                                    <td colspan="2" class="text-right">Total Ingredients</td>
+                                    <!-- Dynamic Totals for Lot Columns -->
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.1f' % (grand_total_sum / lot_count)"/></td>
+                                    </t>
+                                    <td><span t-esc="'%.2f' % grand_total_sum"/></td>
+                                </tr>
+
+                                <!-- Calculate wastage -->
+                                <t t-set="total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
+                                <t t-set="total_qty_produced" t-value="o.product_qty"/>
+
+                                <!-- Wastage Row -->
+                                <tr>
+                                    <td colspan="2" class="text-right">Less: Wastage</td>
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.2f' % (total_wastage / lot_count) if total_wastage else '0.00'"/></td>
+                                    </t>
+                                    <td><span t-esc="'%.2f' % total_wastage"/></td>
+                                </tr>
+
+                                <!-- Net Production Row -->
+                                <tr class="total-row" style="background-color: #d1e7dd;">
+                                    <td colspan="2" class="text-right">Net Production (Output)</td>
+                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
+                                        <td><span t-esc="'%.2f' % (total_qty_produced / lot_count)"/></td>
+                                    </t>
+                                    <td><span t-esc="'%.2f' % total_qty_produced"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Footer Extra Fields -->
+                        <div class="mt-4">
+                            <div class="row mt-3">
+                                <div class="col-12" style="padding: 10px 0;">
+                                    <strong>Authorised Signatory:</strong> ___________________________________
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

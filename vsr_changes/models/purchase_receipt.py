@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 
 class StockPickingVSR(models.Model):
@@ -51,6 +52,54 @@ class StockPickingVSR(models.Model):
                 'default_company_id': self.company_id.id
             },
             'target': 'new',
+        }
+
+    def button_create_bill(self):
+        """Create a vendor bill from the receipt"""
+        self.ensure_one()
+        
+        # Get the partner from partner_id or supplier_id
+        partner = self.partner_id or self.supplier_id
+        if not partner:
+            raise UserError('Please set a vendor in the receipt before creating a bill.')
+        
+        # Prepare invoice lines from stock moves
+        invoice_lines = []
+        for move in self.move_ids:
+            if move.state == 'done' and move.product_id:
+                # Get price and taxes from the move
+                price_unit = move.rate if move.rate else 0.0
+                tax_ids = move.vsr_tax_ids.ids if move.vsr_tax_ids else []
+                
+                invoice_lines.append((0, 0, {
+                    'product_id': move.product_id.id,
+                    'name': move.product_id.display_name,
+                    'quantity': move.product_uom_qty,
+                    'product_uom_id': move.product_uom.id,
+                    'price_unit': price_unit,
+                    'tax_ids': [(6, 0, tax_ids)],
+                }))
+        
+        # Create the vendor bill
+        bill_vals = {
+            'move_type': 'in_invoice',
+            'partner_id': partner.id,
+            'invoice_date': fields.Date.context_today(self),
+            'invoice_origin': self.name,
+            'invoice_line_ids': invoice_lines,
+        }
+        
+        bill = self.env['account.move'].create(bill_vals)
+        
+        # Return action to open the created bill
+        return {
+            'name': 'Vendor Bill',
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'res_id': bill.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('account.view_move_form').id,
+            'target': 'current',
         }
 
     def _update_wastage_from_scrap(self):

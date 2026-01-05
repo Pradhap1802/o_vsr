@@ -1,5 +1,70 @@
 from odoo import models, fields, api
 
+class StockPickingVSR(models.Model):
+    _inherit = 'stock.picking'
+    
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        related='company_id.currency_id',
+        readonly=True
+    )
+    
+    amount_untaxed = fields.Monetary(
+        string='Untaxed Amount',
+        compute='_compute_amounts',
+        currency_field='currency_id',
+        help='Sum of all move subtotals'
+    )
+    
+    amount_tax = fields.Monetary(
+        string='Taxes',
+        compute='_compute_amounts',
+        currency_field='currency_id',
+        help='Sum of all move tax amounts'
+    )
+    
+    amount_total = fields.Monetary(
+        string='Total',
+        compute='_compute_amounts',
+        currency_field='currency_id',
+        help='Sum of all move totals (including taxes)'
+    )
+    
+    @api.depends('move_ids_without_package.subtotal', 'move_ids_without_package.tax_amount', 'move_ids_without_package.total')
+    def _compute_amounts(self):
+        for picking in self:
+            amount_untaxed = sum(move.subtotal for move in picking.move_ids_without_package)
+            amount_tax = sum(move.tax_amount for move in picking.move_ids_without_package)
+            amount_total = sum(move.total for move in picking.move_ids_without_package)
+            
+            picking.amount_untaxed = amount_untaxed
+            picking.amount_tax = amount_tax
+            picking.amount_total = amount_total
+    
+    def get_tax_details(self):
+        """Get tax breakdown by tax name"""
+        self.ensure_one()
+        tax_details = {}
+        
+        for move in self.move_ids_without_package:
+            if move.vsr_tax_ids and move.subtotal:
+                tax_results = move.vsr_tax_ids.compute_all(
+                    move.rate,
+                    currency=self.currency_id,
+                    quantity=move.product_uom_qty,
+                    product=move.product_id,
+                    partner=self.partner_id
+                )
+                for tax in tax_results['taxes']:
+                    tax_name = tax['name']
+                    tax_amount = tax['amount']
+                    if tax_name in tax_details:
+                        tax_details[tax_name] += tax_amount
+                    else:
+                        tax_details[tax_name] = tax_amount
+        
+        return tax_details
 class stock_picking(models.Model):
     _inherit = 'stock.picking'
 

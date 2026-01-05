@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Sequence for Report No -->
+        <record id="seq_pickle_analysis" model="ir.sequence">
+            <field name="name">Pickle Analysis Report No</field>
+            <field name="code">pickle.analysis</field>
+            <field name="prefix">PA</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <!-- List View -->
+        <record id="view_pickle_analysis_list" model="ir.ui.view">
+            <field name="name">pickle.analysis.list</field>
+            <field name="model">pickle.analysis</field>
+            <field name="arch" type="xml">
+                <list string="Pickle Analysis">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="factor_acidity"/>
+                    <field name="salt_factor"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_pickle_analysis_form" model="ir.ui.view">
+            <field name="name">pickle.analysis.form</field>
+            <field name="model">pickle.analysis</field>
+            <field name="arch" type="xml">
+                <form string="Pickle Analysis">
+                    <header>
+                        <button name="action_confirm" string="Confirm" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                        <button name="action_draft" string="Set to Draft" type="object" invisible="state != 'done'"/>
+                        <button name="action_cancel" string="Cancel" type="object" invisible="state != 'draft'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="factor_acidity"/>
+                            </group>
+                            <group>
+                                <field name="salt_factor"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Quality Attributes">
+                            <group>
+                                <field name="taste"/>
+                                <field name="texture"/>
+                                <field name="color"/>
+                            </group>
+                            <group>
+                                <field name="smell"/>
+                                <field name="overall_acceptability"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Analysis Lines">
+                                <field name="line_ids">
+                                    <form string="Analysis Line">
+                                        <group>
+                                            <group string="Product Information">
+                                                <field name="sequence" invisible="1"/>
+                                                <field name="product_id"/>
+                                                <field name="batch_size"/>
+                                            </group>
+                                        </group>
+                                        
+                                        <group>
+                                            <group string="AgNO3 Titration Volume in ml">
+                                                <field name="agno3_initial"/>
+                                                <field name="agno3_final"/>
+                                                <field name="agno3_net_ml"/>
+                                                <field name="agno3_percent_salt"/>
+                                            </group>
+                                        </group>
+                                        
+                                        <group>
+                                            <group string="NaOH Titration Volume in ml">
+                                                <field name="naoh_initial"/>
+                                                <field name="naoh_final"/>
+                                                <field name="naoh_net_ml"/>
+                                                <field name="naoh_percent_acidity"/>
+                                            </group>
+                                            
+                                            <group string="Recommendations">
+                                                <field name="recommended_qty_salt"/>
+                                                <field name="recommended_qty_aa_ca"/>
+                                            </group>
+                                        </group>
+                                        
+                                        <group>
+                                            <field name="remarks" placeholder="Enter remarks here..."/>
+                                        </group>
+                                    </form>
+                                    
+                                    <list editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_id"/>
+                                        <field name="batch_size"/>
+                                        
+                                        <!-- AgNO3 Titration -->
+                                        <field name="agno3_initial"/>
+                                        <field name="agno3_final"/>
+                                        <field name="agno3_net_ml"/>
+                                        <field name="agno3_percent_salt"/>
+                                        
+                                        <!-- NaOH Titration -->
+                                        <field name="naoh_initial"/>
+                                        <field name="naoh_final"/>
+                                        <field name="naoh_net_ml"/>
+                                        <field name="naoh_percent_acidity"/>
+                                        
+                                        <!-- Recommendations -->
+                                        <field name="recommended_qty_salt"/>
+                                        <field name="recommended_qty_aa_ca"/>
+                                        <field name="remarks"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_pickle_analysis" model="ir.actions.act_window">
+            <field name="name">Pickle Analysis</field>
+            <field name="res_model">pickle.analysis</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Pickle Analysis Report
+                </p>
+            </field>
+        </record>
+
+        <!-- Report Action -->
+        <record id="action_report_pickle_analysis" model="ir.actions.report">
+            <field name="name">Pickle Analysis Report</field>
+            <field name="model">pickle.analysis</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">vsr_packing_memo.report_pickle_analysis_document</field>
+            <field name="report_file">vsr_packing_memo.report_pickle_analysis_document</field>
+            <field name="print_report_name">'Pickle Analysis - %s' % object.name</field>
+            <field name="binding_model_id" ref="model_pickle_analysis"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Report Template -->
+        <template id="report_pickle_analysis_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 10px; padding: 20px;">
+                        
+                        <!-- Header with Border -->
+                        <div style="border: 2px solid black; padding: 10px; margin-bottom: 15px;">
+                            <!-- Company Logo -->
+                            <div style="text-align: center; margin-bottom: 10px;">
+                                <img t-if="o.env.company.logo" t-att-src="'data:image/png;base64,%s' % o.env.company.logo.decode('utf-8')" style="max-height: 80px; max-width: 200px;" alt="Company Logo"/>
+                            </div>
+                            
+                            <!-- Report Title -->
+                            <div style="text-align: center; margin-bottom: 10px;">
+                                <h5 style="margin: 0; font-size: 12px; font-weight: bold;">FINISHED PICKLES ANALYSIS REPORT FOR SALT &amp; ACIDITY</h5>
+                            </div>
+
+                            <!-- Report Info Table -->
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                                <tr>
+                                    <td style="width: 12%; padding: 3px; border: 1px solid black; font-weight: bold;">Report No:</td>
+                                    <td style="width: 20%; padding: 3px; border: 1px solid black;"><span t-field="o.name"/></td>
+                                    <td style="width: 18%; padding: 3px; border: 1px solid black; font-weight: bold;">Factor: Acidity</td>
+                                    <td style="width: 18%; padding: 3px; border: 1px solid black;"><span t-field="o.factor_acidity"/>, Salt: <span t-field="o.salt_factor"/></td>
+                                    <td style="width: 10%; padding: 3px; border: 1px solid black; font-weight: bold;">Date:</td>
+                                    <td style="width: 22%; padding: 3px; border: 1px solid black;"><span t-field="o.date"/></td>
+                                </tr>
+                            </table>
+
+                            <!-- Quality Attributes Section -->
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                                <thead>
+                                    <tr style="background-color: #e8e8e8;">
+                                        <th colspan="5" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 10px; font-weight: bold;">Quality Attributes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 20%; padding: 3px; border: 1px solid black; font-weight: bold;">Taste:</td>
+                                        <td style="width: 30%; padding: 3px; border: 1px solid black;"><span t-field="o.taste"/></td>
+                                        <td style="width: 20%; padding: 3px; border: 1px solid black; font-weight: bold;">Texture:</td>
+                                        <td style="width: 30%; padding: 3px; border: 1px solid black;"><span t-field="o.texture"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Colour:</td>
+                                        <td style="padding: 3px; border: 1px solid black;"><span t-field="o.color"/></td>
+                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Smell/Odour:</td>
+                                        <td style="padding: 3px; border: 1px solid black;"><span t-field="o.smell"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Overall Quality:</td>
+                                        <td colspan="3" style="padding: 3px; border: 1px solid black;">
+                                            <span t-if="o.overall_acceptability == 'pass'" style="color: green; font-weight: bold;">✓ Pass</span>
+                                            <span t-if="o.overall_acceptability == 'fail'" style="color: red; font-weight: bold;">✗ Fail</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Main Analysis Table -->
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                                <thead>
+                                    <tr style="background-color: #f0f0f0;">
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Name of The Product</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Batch Size</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Final</th>
+                                        <th colspan="4" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">AgNO3 Titration Volume in ml</th>
+                                        <th colspan="4" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">NaOH Titration Volume in ml</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of salt</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of AA/CA</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Remarks</th>
+                                    </tr>
+                                    <tr style="background-color: #f0f0f0;">
+                                        <!-- AgNO3 sub-headers -->
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">Final</th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">Initial</th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">Net ml</th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">% Salt</th>
+                                        
+                                        <!-- NaOH sub-headers -->
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">Final</th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">Initial</th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">Net ml</th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center; font-size: 8px; font-weight: bold;">% Acidity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.line_ids" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.product_id.name"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.batch_size if line.batch_size else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.1f' % line.final_batch if line.final_batch else ''"/></td>
+                                            
+                                            <!-- AgNO3 Titration -->
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.agno3_final if line.agno3_final else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.agno3_initial if line.agno3_initial else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.1f' % line.agno3_net_ml if line.agno3_net_ml else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.agno3_percent_salt if line.agno3_percent_salt else ''"/></td>
+                                            
+                                            <!-- NaOH Titration -->
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.naoh_final if line.naoh_final else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.1f' % line.naoh_initial if line.naoh_initial else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.1f' % line.naoh_net_ml if line.naoh_net_ml else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.naoh_percent_acidity if line.naoh_percent_acidity else ''"/></td>
+                                            
+                                            <!-- Recommendations -->
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_salt if line.recommended_qty_salt else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_aa_ca if line.recommended_qty_aa_ca else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.remarks"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            
+                            <!-- Authorised Signatory -->
+                            <div style="margin-top: 30px; text-align: right; padding-right: 50px;">
+                                <div style="display: inline-block; text-align: center;">
+                                    <div style="border-bottom: 1px solid black; width: 200px; margin-bottom: 5px;"></div>
+                                    <p style="margin: 0; font-size: 10px; font-weight: bold;">Authorised Signatory</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <!-- Menu Items -->
+        <menuitem id="menu_pickle_analysis" 
+                  name="Pickle Analysis" 
+                  parent="quality_control.menu_quality_root" 
+                  action="action_pickle_analysis" 
+                  sequence="100"/>
+    </data>
+</odoo>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add Category field to BOM Form View -->
+        <record id="view_mrp_bom_form_category" model="ir.ui.view">
+            <field name="name">mrp.bom.form.category</field>
+            <field name="model">mrp.bom</field>
+            <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_tmpl_id']" position="after">
+                    <field name="bom_category"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Add Category field to BOM Tree View -->
+        <record id="view_mrp_bom_tree_category" model="ir.ui.view">
+            <field name="name">mrp.bom.tree.category</field>
+            <field name="model">mrp.bom</field>
+            <field name="inherit_id" ref="mrp.mrp_bom_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_tmpl_id']" position="after">
+                    <field name="bom_category" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+    
+    <!-- Add Category Group By to BOM Search View -->
+    <record id="view_mrp_bom_filter_category" model="ir.ui.view">
+        <field name="name">mrp.bom.select.category</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.view_mrp_bom_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="bom_category"/>
+                <filter string="BOM Category" name="bom_category" context="{'group_by': 'bom_category'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
