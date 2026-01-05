@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit the main invoice document template -->
+    <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document" priority="20">
+        
+        <!-- Hide the default information block and add custom layout -->
+        <xpath expr="//div[@id='informations']" position="replace">
+            <!-- Bordered boxes for Invoice Date, Due Date, Source -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <table class="table table-sm table-bordered" style="margin-bottom: 10px;">
+                        <tbody>
+                            <tr>
+                                <td style="width: 33%; padding: 8px;">
+                                    <strong>Invoice Date</strong><br/>
+                                    <span t-field="o.invoice_date"/>
+                                </td>
+                                <td style="width: 33%; padding: 8px;">
+                                    <strong>Due Date</strong><br/>
+                                    <span t-field="o.invoice_date_due"/>
+                                </td>
+                                <td style="width: 34%; padding: 8px;">
+                                    <strong>Source</strong><br/>
+                                    <span t-field="o.invoice_origin"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </xpath>
+        
+        <!-- Add company and bank details at the bottom -->
+        <xpath expr="//p[@name='payment_communication']" position="after">
+            <div class="row mt-4" style="page-break-inside: avoid;">
+                <!-- Company Bank Details -->
+                <div class="col-12">
+                    <table class="table table-sm" style="font-size: 10pt;">
+                        <tbody>
+                            <tr>
+                                <td style="width: 70%; vertical-align: top; padding: 5px;">
+                                    <strong>Company's Bank Details:</strong><br/>
+                                    <t t-if="o.partner_bank_id">
+                                        <strong>A/c Holder's Name:</strong> <span t-field="o.company_id.name"/><br/>
+                                        <strong>Bank Name:</strong> <span t-field="o.partner_bank_id.bank_id.name"/><br/>
+                                        <strong>A/c No.:</strong> <span t-field="o.partner_bank_id.acc_number"/><br/>
+                                        <strong>Branch &amp; IFS Code:</strong> <span t-field="o.partner_bank_id.bank_id.bic"/>
+                                    </t>
+                                    <t t-else="">
+                                        <em>No bank account configured</em>
+                                    </t>
+                                </td>
+                                <td style="width: 30%; vertical-align: top; padding: 5px; text-align: right;">
+                                    <strong>For <span t-field="o.company_id.name"/></strong><br/><br/><br/>
+                                    <span>Authorized Signatory</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Declaration and Company Footer -->
+            <div class="row mt-2" style="page-break-inside: avoid;">
+                <div class="col-12" style="font-size: 9pt;">
+                    <p>
+                        <strong>Declaration:</strong><br/>
+                        <span>PAYMENT TERMS BILLING DATE FROM WITHIN 7 DAYS</span>
+                    </p>
+                    <div class="text-center" style="border-top: 1px solid #ddd; padding-top: 10px;">
+                        <span t-field="o.company_id.phone" t-if="o.company_id.phone">Mobile: <span t-field="o.company_id.phone"/></span>
+                        <span t-if="o.company_id.phone and o.company_id.email"> | </span>
+                        <span t-field="o.company_id.email" t-if="o.company_id.email">Mail: <span t-field="o.company_id.email"/></span>
+                        <br/>
+                        <span t-field="o.company_id.vat" t-if="o.company_id.vat">GST: <span t-field="o.company_id.vat"/></span>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        
+    </template>
+</odoo>
