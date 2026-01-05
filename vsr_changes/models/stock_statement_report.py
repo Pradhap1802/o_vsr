@@ -16,7 +16,9 @@ class StockStatementReport(models.AbstractModel):
         category_ids = data.get('category_ids')
         
         # Calculate previous day for opening stock
-        date_start_obj = datetime.strptime(date_start, '%Y-%m-%d')
+        # Handle both date and datetime formats by extracting only the date portion
+        date_start_only = date_start.split(' ')[0] if ' ' in date_start else date_start
+        date_start_obj = datetime.strptime(date_start_only, '%Y-%m-%d')
         previous_day = (date_start_obj - timedelta(days=1)).strftime('%Y-%m-%d')
         
         # Build SQL query
@@ -80,14 +82,19 @@ class StockStatementReport(models.AbstractModel):
             # Total = Opening + Receipt
             line['total'] = line['opening'] + line['receipt']
             
-            # Closing Stock = Opening + Receipt - Issue (or Total - Issue)
+            # Closing Stock = Opening + Receipt - Issue (calculated stock)
             line['closing'] = line['total'] - line['issue']
             
-            # Physical Stock = Closing + Physical Adjustment (from inventory count)
-            line['physical'] = line['closing'] + physical_adjustment
+            # Physical Stock = Closing + Physical Adjustment
+            # - If NO inventory adjustment done: physical_adjustment = 0, so Physical = Closing
+            # - If inventory adjustment done: Physical = Closing + Adjustment (the actual counted stock)
+            line['physical'] = physical_adjustment
             
-            # Difference = Closing - Physical (only if there's a variance)
-            line['difference'] = line['closing'] - line['physical']
+            # Difference = Physical - Closing
+            # - If Physical = Closing, then Difference = 0
+            # - If Physical > Closing, then Difference is positive (surplus/gain)
+            # - If Physical < Closing, then Difference is negative (shortage/loss)
+            line['difference'] = line['physical'] - line['closing']
             
             # Only show difference if it's not zero
             if abs(line['difference']) < 0.01:  # Avoid floating point issues
