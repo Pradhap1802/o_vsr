@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_mrp_workorder_inherit_test"
+                  inherit_id="mrp.report_mrporder">
+            <xpath expr="."
+                   position="replace">
+                <t t-call="web.external_layout">
+                    <main class="o_report_layout">
+                        <div class="page">
+                            <!-- Loop through production orders -->
+                            <t t-foreach="docs"
+                               t-as="o">
+                                <table class="table table-sm"
+                                       style="width:100%; margin-bottom:20px;">
+                                    <tr>
+                                        <td>
+                                            <strong>PRODUCT NAME</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="o.product_id.display_name" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TIME STARTED</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="o.date_start" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TIME END</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="o.date_finished" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>DATE</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="o.date_start.strftime('%d-%m-%Y')" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>MEMO NO:</strong>
+                                        </td>
+                                        <td colspan="3">
+                                            <t t-esc="o.name" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!-- MATERIAL REQUISITION SECTION -->
+                                <h4 style="font-weight:bold; text-align:center;">MATERIAL REQUISITION SLIP</h4>
+                                <table class="table table-bordered"
+                                       style="width:100%; text-align:center; font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Sl No</th>
+                                            <th>Raw Materials</th>
+                                            <th>Qty Required</th>
+                                            <th>Unit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="counter"
+                                           t-value="0" />
+                                        <t t-foreach="o.move_raw_ids"
+                                           t-as="line">
+                                            <t t-set="counter"
+                                               t-value="counter + 1" />
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="counter" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.product_id.display_name" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.product_uom_qty" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.product_uom.name" />
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <p>
+                                    <strong>Total Quantity (kg):</strong>
+                                    <t t-esc="sum(o.move_raw_ids.mapped('product_uom_qty'))" />
+                                  
+                                </p>
+
+
+                                <t t-if="o.scrap_ids">
+                                    <h4 style="font-weight:bold;">Wastage DETAILS</h4>
+                                    <table class="table table-bordered"
+                                           style="width:60%; font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Scrap Qty</th>
+                                                <th>UoM</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="o.scrap_ids"
+                                               t-as="scrap">
+                                                <tr>
+                                                    <td>
+                                                        <t t-esc="scrap.product_id.display_name" />
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="scrap.scrap_qty" />
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="scrap.product_uom_id.name" />
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </t>
+                               
+                               
+                                <t t-set="raw_total" t-value="sum(o.move_raw_ids.mapped('product_uom_qty'))"/>
+                                
+                                <t t-set="scrap_qty" t-value="sum(o.scrap_ids.mapped('scrap_qty'))"/>
+                                <t t-set="net_qty" t-value="raw_total - scrap_qty"/>
+
+
+
+                                <t t-if="o.scrap_ids">
+                                    <h4 style="font-weight:bold;">PRODUCTION MEMO</h4>
+                                    <table class="table table-bordered"
+                                           style="width:60%; font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Product Name</th>
+                                                <th> Qty</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t>
+                                                <tr>
+                                                    <td>
+                                                        Raw material Total
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="raw_total" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Wastage Qty
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="scrap_qty" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Net Quantity
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="net_qty" />
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </t>
+                               
+                                
+                                <strong>Net Quantity (kg):</strong>
+                                <t t-esc="net_qty" />
+                                <br />
+                                <strong>Quantity checked by:</strong>                                    
+                                    ___________________________________
+                                <strong>Name &amp; Signature</strong>                                    
+                                    ____________________________________________
+                                    
+                                    
+                                </t>
+                            </div>
+                        </main>
+                    </t>
+                </xpath>
+            </template>
+        </data>
+    </odoo>
