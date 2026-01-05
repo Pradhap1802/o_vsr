@@ -1,6 +1,6 @@
 {
     'name': 'VSR Changes',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Stock',
     'summary': 'Customizations for VSR stock operations',
     'description': '''
@@ -28,6 +28,7 @@
         'views/mrp_views.xml',
         'wizard/stock_statement_wizard.xml',
         'views/report_stock_statement.xml',
+        'report/mrp_order.xml',
     ],
     'assets': {
         'web.assets_backend': [

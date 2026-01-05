@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<template id="report_order_tracking">
+  <t t-call="web.external_layout">
+    <div class="page">
+
+      <h3 class="text-center">
+        ORDER TRACKING SHEET
+      </h3>
+
+      <table class="table table-bordered" style="font-size:12px;">
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Date</th>
+            <th>Order No</th>
+            <th>Customer</th>
+            <th>Place</th>
+            <th>Payment</th>
+            <th>State</th>
+            <th>Qty (Cases)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <t t-set="sl" t-value="1"/>
+          <t t-foreach="docs" t-as="o">
+            <tr>
+              <td><t t-esc="sl"/></td>
+              <td><t t-esc="o.date_order"/></td>
+              <td><t t-esc="o.name"/></td>
+              <td><t t-esc="o.partner_id.name"/></td>
+              <td><t t-esc="o.partner_shipping_id.city"/></td>
+              <td>
+                <t t-if="o.amount_paid &gt; 0">Advance</t>
+                <t t-else="">Pending</t>
+              </td>
+              <td><t t-esc="o.partner_id.state_id.code"/></td>
+              <td>
+                <t t-esc="sum(o.order_line.mapped('product_uom_qty'))"/>
+              </td>
+              <td>
+                <t t-if="o.picking_ids.filtered(lambda p: p.state == 'done')">
+                  Dispatched
+                </t>
+                <t t-else="">Pending</t>
+              </td>
+            </tr>
+            <t t-set="sl" t-value="sl + 1"/>
+          </t>
+        </tbody>
+      </table>
+
+    </div>
+  </t>
+</template>
+</odoo>

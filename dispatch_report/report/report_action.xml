@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_order_tracking_report" model="ir.actions.report">
+        <field name="name">Order Tracking Report</field>
+        <field name="model">order.tracking.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">dispatch_report.report_order_tracking</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+    </record>
+</odoo>
