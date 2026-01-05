@@ -1,6 +1,6 @@
 {
     'name': 'VSR Changes',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Stock',
     'summary': 'Customizations for VSR stock operations',
     'description': '''
@@ -17,6 +17,7 @@
         'views/stock_move_views.xml',
         'views/stock_scrap_views.xml',
         'views/bom_report_views.xml',
+        'report/mrp_order.xml',
     ],
     'installable': True,
     'application': False,

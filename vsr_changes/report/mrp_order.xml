@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_mrporder_document_custom" inherit_id="mrp.report_mrp_workorder">
+
+        <!-- Replace only the inner page content -->
+        <xpath expr="//div[@class='page']" position="replace">
+            <div class="page">
+                <t t-foreach="docs" t-as="doc">
+
+                    <div class="settlement-report">
+
+                        <!-- PRODUCT NAME -->
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <strong>PRODUCT NAME</strong>
+                                    </div>
+                                    <div class="col-6 text-start">
+                                        <t t-esc="doc.product_id.name"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QUANTITY -->
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <strong>QUANTITY</strong>
+                                    </div>
+                                    <div class="col-6 text-start">
+                                        <t t-esc="doc.product_qty"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </t>
+            </div>
+        </xpath>
+
+    </template>
+</odoo>
