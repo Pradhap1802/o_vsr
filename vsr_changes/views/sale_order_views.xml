@@ -5,10 +5,16 @@
         <field name="name">sale.order.form.partner.domain</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">100</field>
         <field name="arch" type="xml">
             <!-- Add domain to partner_id field to show only customers -->
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="domain">[('partner_type', '=', 'customer')]</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_uom']" position="after">
+                <field name="pieces_per_case" optional="show"/>
+                <field name="price_per_piece" optional="show"/>
             </xpath>
         </field>
     </record>

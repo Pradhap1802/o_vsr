@@ -49,6 +49,10 @@
                 <field name="delivery_number"/>
                 <field name="destination"/>
             </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='price_unit']" position="before">
+                <field name="pieces_per_case"/>
+                <field name="price_per_piece"/>
+            </xpath>
         </field>
     </record>
 </odoo>

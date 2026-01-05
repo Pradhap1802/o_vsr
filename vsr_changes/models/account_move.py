@@ -47,3 +47,21 @@ class AccountMove(models.Model):
                 move.delivery_number = ", ".join(delivery_ids.mapped('name'))
             else:
                 move.delivery_number = ""
+
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    pieces_per_case = fields.Integer(
+        string='Pieces', 
+        related='product_id.pieces_per_case', 
+        readonly=False, 
+        store=True
+    )
+    price_per_piece = fields.Float(
+        string='Price/Piece', 
+        related='product_id.price_per_piece', 
+        digits='Product Price', 
+        readonly=False, 
+        store=True
+    )

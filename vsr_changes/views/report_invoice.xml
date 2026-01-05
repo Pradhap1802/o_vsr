@@ -44,6 +44,22 @@
             </div>
         </xpath>
         
+        
+        <!-- Add Pieces and Price/Piece to Line Table -->
+        <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_quantity']" position="after">
+            <th name="th_pieces" class="text-end">Pieces</th>
+            <th name="th_price_piece" class="text-end">Price/Piece</th>
+        </xpath>
+        
+        <xpath expr="//table[@name='invoice_line_table']/tbody//td[@name='td_quantity']" position="after">
+            <td name="td_pieces" class="text-end">
+                <span t-field="line.pieces_per_case"/>
+            </td>
+            <td name="td_price_piece" class="text-end">
+                <span t-field="line.price_per_piece"/>
+            </td>
+        </xpath>
+
         <!-- Add company and bank details at the bottom -->
         <xpath expr="//p[@name='payment_communication']" position="after">
             <div class="row mt-4" style="page-break-inside: avoid;">

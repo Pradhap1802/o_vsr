@@ -112,5 +112,32 @@ class SaleOrderVSR(models.Model):
             if alert_message:
                 self.message_post(body=f"<strong>Payment Confirmation Alert:</strong>\n{alert_message}")
         
+
         except Exception as e:
             _logger.warning(f'Error checking payments during confirmation: {str(e)}')
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    pieces_per_case = fields.Integer(
+        string='Pieces', 
+        related='product_id.pieces_per_case', 
+        readonly=False, 
+        store=True
+    )
+    price_per_piece = fields.Float(
+        string='Price/Piece', 
+        related='product_id.price_per_piece', 
+        digits='Product Price', 
+        readonly=False, 
+        store=True
+    )
+
+    def _prepare_invoice_line(self, **optional_values):
+        res = super()._prepare_invoice_line(**optional_values)
+        res.update({
+            'pieces_per_case': self.pieces_per_case,
+            'price_per_piece': self.price_per_piece,
+        })
+        return res

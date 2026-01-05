@@ -26,6 +26,7 @@
         'views/bom_report_views.xml',
         'views/report_receipt_note.xml',
         'views/report_invoice.xml',
+        'views/report_sale_order.xml',
         'views/mrp_views.xml',
         'wizard/stock_statement_wizard.xml',
         'views/report_stock_statement.xml',
