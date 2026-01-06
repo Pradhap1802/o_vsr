@@ -91,75 +91,110 @@
                         </style>
 
                         <t t-set="lot_count" t-value="o.no_of_lots if o.no_of_lots > 0 else 1"/>
+                        <t t-set="chunk_size" t-value="10"/>
                         
-                        <table class="packing-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 50px;">Sl.No</th>
-                                    <th class="text-left">Ingrideants In Kg</th>
-                                    <!-- Dynamic Lot Columns -->
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <th>Lot <span t-esc="'%02d' % i"/></th>
-                                    </t>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Ingredients Rows -->
-                                <t t-set="total_per_lot_sum" t-value="0"/>
-                                <t t-set="grand_total_sum" t-value="0"/>
-                                
-                                <tr t-foreach="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')" t-as="move">
-                                    <td><span t-esc="move_index + 1"/></td>
-                                    <td class="text-left"><span t-field="move.product_id.name"/></td>
+                        <!-- Iterate over lots in chunks of 10 -->
+                        <t t-foreach="range(0, lot_count, chunk_size)" t-as="chunk_start_idx">
+                            <t t-set="chunk_end_idx" t-value="min(chunk_start_idx + chunk_size, lot_count)"/>
+                            
+                            <div t-if="chunk_start_idx > 0" style="margin-top: 20px; page-break-inside: avoid;"></div>
+
+                            <table class="packing-table" style="page-break-inside: avoid;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">Sl.No</th>
+                                        <th class="text-left">Ingrideants In Kg</th>
+                                        <!-- Dynamic Lot Columns for current chunk -->
+                                        <t t-foreach="range(chunk_start_idx + 1, chunk_end_idx + 1)" t-as="i">
+                                            <th>Lot <span t-esc="'%02d' % i"/></th>
+                                        </t>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Ingredients Rows -->
+                                    <t t-set="total_per_lot_sum" t-value="0"/>
+                                    <t t-set="grand_total_sum" t-value="0"/>
                                     
-                                    <!-- Calculate per lot quantity -->
-                                    <t t-set="qty_per_lot" t-value="move.product_uom_qty / lot_count"/>
-                                    <t t-set="total_per_lot_sum" t-value="total_per_lot_sum + qty_per_lot"/>
-                                    <t t-set="grand_total_sum" t-value="grand_total_sum + move.product_uom_qty"/>
+                                    <tr t-foreach="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')" t-as="move">
+                                        <td><span t-esc="move_index + 1"/></td>
+                                        <td class="text-left"><span t-field="move.product_id.name"/></td>
+                                        
+                                        <!-- Calculate per lot quantity -->
+                                        <t t-set="qty_per_lot" t-value="move.product_uom_qty / lot_count"/>
+                                        <t t-set="total_per_lot_sum" t-value="total_per_lot_sum + qty_per_lot"/>
+                                        <t t-set="grand_total_sum" t-value="grand_total_sum + move.product_uom_qty"/>
 
-                                    <!-- Repeat per lot quantity for each lot column -->
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.2f' % qty_per_lot"/></td>
-                                    </t>
+                                        <!-- Repeat per lot quantity for each lot column in current chunk -->
+                                        <t t-foreach="range(chunk_start_idx + 1, chunk_end_idx + 1)" t-as="i">
+                                            <td><span t-esc="'%.2f' % qty_per_lot"/></td>
+                                        </t>
+                                        
+                                        <!-- Total Column (always show total for the line) -->
+                                        <td><strong><span t-esc="'%.2f' % move.product_uom_qty"/></strong></td>
+                                    </tr>
                                     
-                                    <!-- Total Column -->
-                                    <td><strong><span t-esc="'%.2f' % move.product_uom_qty"/></strong></td>
-                                </tr>
-                                
-                                <!-- Total Ingredients Row -->
-                                <tr class="total-row">
-                                    <td colspan="2" class="text-right">Total Ingredients</td>
-                                    <!-- Dynamic Totals for Lot Columns -->
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.1f' % (grand_total_sum / lot_count)"/></td>
-                                    </t>
-                                    <td><span t-esc="'%.2f' % grand_total_sum"/></td>
-                                </tr>
+                                    <!-- Total Ingredients Row -->
+                                    <tr class="total-row">
+                                        <td colspan="2" class="text-right">Total Ingredients</td>
+                                        <!-- Dynamic Totals for Lot Columns in current chunk -->
+                                        <t t-foreach="range(chunk_start_idx + 1, chunk_end_idx + 1)" t-as="i">
+                                            <td><span t-esc="'%.1f' % (grand_total_sum / lot_count)"/></td>
+                                        </t>
+                                        <td><span t-esc="'%.2f' % grand_total_sum"/></td>
+                                    </tr>
 
-                                <!-- Calculate wastage -->
-                                <t t-set="total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
-                                <t t-set="total_qty_produced" t-value="o.product_qty"/>
+                                    <!-- Calculate wastage -->
+                                    <t t-set="total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
+                                    <t t-set="total_qty_produced" t-value="o.product_qty"/>
 
-                                <!-- Wastage Row -->
+                                    <!-- Wastage Row -->
+                                    <tr>
+                                        <td colspan="2" class="text-right">Less: Wastage</td>
+                                        <t t-foreach="range(chunk_start_idx + 1, chunk_end_idx + 1)" t-as="i">
+                                            <td><span t-esc="'%.2f' % (total_wastage / lot_count) if total_wastage else '0.00'"/></td>
+                                        </t>
+                                        <td><span t-esc="'%.2f' % total_wastage"/></td>
+                                    </tr>
+
+                                    <!-- Net Production Row -->
+                                    <tr class="total-row" style="background-color: #d1e7dd;">
+                                        <td colspan="2" class="text-right">Net Production (Output)</td>
+                                        <t t-foreach="range(chunk_start_idx + 1, chunk_end_idx + 1)" t-as="i">
+                                            <td><span t-esc="'%.2f' % (total_qty_produced / lot_count)"/></td>
+                                        </t>
+                                        <td><span t-esc="'%.2f' % total_qty_produced"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Sensory Analysis Section -->
+                        <div style="margin-top: 20px;">
+                            <div style="font-weight: bold; margin-bottom: 5px; font-size: 12px; border-bottom: 1px solid #000; display: inline-block;">SENSORY ANALYSIS</div>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                                 <tr>
-                                    <td colspan="2" class="text-right">Less: Wastage</td>
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.2f' % (total_wastage / lot_count) if total_wastage else '0.00'"/></td>
-                                    </t>
-                                    <td><span t-esc="'%.2f' % total_wastage"/></td>
+                                    <td style="border: 1px solid #000; padding: 5px;">
+                                        <strong>Taste:</strong> <span t-field="o.taste"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 5px;">
+                                        <strong>Texture:</strong> <span t-field="o.texture"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 5px;">
+                                        <strong>Color:</strong> <span t-field="o.color"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 5px;">
+                                        <strong>Smell:</strong> <span t-field="o.smell"/>
+                                    </td>
                                 </tr>
-
-                                <!-- Net Production Row -->
-                                <tr class="total-row" style="background-color: #d1e7dd;">
-                                    <td colspan="2" class="text-right">Net Production (Output)</td>
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.2f' % (total_qty_produced / lot_count)"/></td>
-                                    </t>
-                                    <td><span t-esc="'%.2f' % total_qty_produced"/></td>
+                                <tr>
+                                    <td colspan="4" style="border: 1px solid #000; padding: 5px; background-color: #f9f9f9;">
+                                        <strong>Overall Acceptability:</strong> 
+                                        <span t-field="o.overall_acceptability" style="font-weight: bold; text-transform: uppercase;"/>
+                                    </td>
                                 </tr>
-                            </tbody>
-                        </table>
+                            </table>
+                        </div>
 
                         <!-- Footer Extra Fields -->
                         <div class="mt-4">

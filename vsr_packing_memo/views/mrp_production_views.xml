@@ -13,6 +13,19 @@
                     <field name="memo_no" readonly="1" invisible="production_type != 'production_memo'"/>
                     <field name="no_of_lots" invisible="production_type != 'production_memo'"/>
                 </field>
+                <xpath expr="//sheet//notebook" position="inside">
+                    <page string="Sensory Attributes" invisible="production_type != 'production_memo'">
+                        <group>
+                            <group>
+                                <field name="taste"/>
+                                <field name="texture"/>
+                                <field name="color"/>
+                                <field name="smell"/>
+                                <field name="overall_acceptability"/>
+                            </group>
+                        </group>    
+                    </page>
+                </xpath>
             </field>
         </record>
 

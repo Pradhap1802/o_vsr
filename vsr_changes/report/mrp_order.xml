@@ -177,6 +177,30 @@
                                     </table>
                                 </t>
                                
+                                <!-- Sensory Analysis Section -->
+                                <div style="margin-top: 20px; page-break-inside: avoid;">
+                                    <h4 style="font-weight:bold;">SENSORY ANALYSIS</h4>
+                                    <table class="table table-bordered table-sm" style="width: 100%; font-size: 12px;">
+                                        <tr>
+                                            <td style="width: 15%;"><strong>Taste</strong></td>
+                                            <td style="width: 35%;"><span t-field="o.taste"/></td>
+                                            <td style="width: 15%;"><strong>Texture</strong></td>
+                                            <td style="width: 35%;"><span t-field="o.texture"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Color</strong></td>
+                                            <td><span t-field="o.color"/></td>
+                                            <td><strong>Smell</strong></td>
+                                            <td><span t-field="o.smell"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="background-color: #f9f9f9;">
+                                                <strong>Overall Acceptability:</strong> 
+                                                <span t-field="o.overall_acceptability" style="font-weight:bold; text-transform:uppercase;"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
                                 
                                 <strong>Net Quantity (kg):</strong>
                                 <t t-esc="net_qty" />

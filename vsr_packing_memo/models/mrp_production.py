@@ -112,3 +112,13 @@ class MrpProduction(models.Model):
         store=True,
         help='Total quantity scrapped/wasted in this manufacturing order'
     )
+
+    # Sensory Attributes for Production Memo
+    taste = fields.Char(string='Taste', help='Taste of the product')
+    texture = fields.Char(string='Texture', help='Texture of the product (e.g., Crunchy, Soft)')
+    color = fields.Char(string='Colour', help='Color of the product')
+    smell = fields.Char(string='Smell/Odour', help='Smell or aroma of the product')
+    overall_acceptability = fields.Selection([
+        ('pass', 'Pass'),
+        ('fail', 'Fail'),
+    ], string='Overall Quality', default='pass')
