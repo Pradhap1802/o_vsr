@@ -11,7 +11,8 @@
     'data': [
         'report/report_action.xml',
         'views/report_order_tracking.xml',
-        'views/report_tracking_wizard.xml'
+        'views/report_tracking_wizard.xml',
+        'security/ir.model.access.csv',
         
     ],
     'installable': True,

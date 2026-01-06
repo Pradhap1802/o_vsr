@@ -34,6 +34,7 @@
   <menuitem
     id="dispatch_report_menu"
     name="dispatch report"
+    action="action_order_tracking_wizard"
     parent="sale.sale_menu_root"
-    sequence="10"/>
+    sequence="92"/>
 </odoo>

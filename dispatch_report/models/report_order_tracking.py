@@ -1,5 +1,7 @@
+from odoo import models
+
 class ReportOrderTracking(models.AbstractModel):
-    _name = 'report.your_module.report_order_tracking'
+    _name = 'report.dispatch_report.report_order_tracking'
 
     def _get_report_values(self, docids, data=None):
         wizard = self.env['order.tracking.wizard'].browse(docids)
@@ -11,7 +13,7 @@ class ReportOrderTracking(models.AbstractModel):
         if wizard.state:
             domain.append(('state', '=', wizard.state))
 
-        orders = self.env['sale.order'].search(domain, order='date_order asc')
+        orders = self.env['stock.picking'].search(domain, order='date_order asc')
 
         return {
             'docs': orders,

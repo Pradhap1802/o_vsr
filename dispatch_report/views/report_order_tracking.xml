@@ -28,7 +28,7 @@
           <t t-foreach="docs" t-as="o">
             <tr>
               <td><t t-esc="sl"/></td>
-              <td><t t-esc="o.date_order"/></td>
+              <td><t t-esc="o.scheduled_date"/></td>
               <td><t t-esc="o.name"/></td>
               <td><t t-esc="o.partner_id.name"/></td>
               <td><t t-esc="o.partner_shipping_id.city"/></td>
