@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_template_form_vsr" model="ir.ui.view">
+        <field name="name">product.template.form.vsr</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="before">
+                <field name="pieces_per_case" string="Pieces"/>
+                <field name="price_per_piece"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

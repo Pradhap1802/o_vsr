@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit the main invoice document template -->
+    <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document" priority="20">
+        
+        <!-- Hide the default information block and add custom layout -->
+        <xpath expr="//div[@id='informations']" position="replace">
+            <!-- Bordered boxes for Invoice Date, Due Date, Source -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <table class="table table-sm table-bordered" style="margin-bottom: 10px;">
+                        <tbody>
+                            <tr>
+                                <td style="width: 33%; padding: 8px;">
+                                    <strong>Invoice Date</strong><br/>
+                                    <span t-field="o.invoice_date"/>
+                                </td>
+                                <td style="width: 33%; padding: 8px;">
+                                    <strong>Due Date</strong><br/>
+                                    <span t-field="o.invoice_date_due"/>
+                                </td>
+                                <td style="width: 34%; padding: 8px;">
+                                    <strong>Source</strong><br/>
+                                    <span t-field="o.invoice_origin"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 33%; padding: 8px;">
+                                    <strong>Vehicle Number</strong><br/>
+                                    <span t-field="o.vsr_vehicle_number"/>
+                                </td>
+                                <td style="width: 33%; padding: 8px;">
+                                    <strong>Dispatch Number</strong><br/>
+                                    <span t-field="o.delivery_number"/>
+                                </td>
+                                <td style="width: 34%; padding: 8px;">
+                                    <strong>Destination</strong><br/>
+                                    <span t-field="o.destination"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </xpath>
+        
+        
+        <!-- Add Pieces and Price/Piece to Line Table -->
+        <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_quantity']" position="after">
+            <th name="th_pieces" class="text-end">Pieces</th>
+            <th name="th_price_piece" class="text-end">Price/Piece</th>
+        </xpath>
+        
+        <xpath expr="//table[@name='invoice_line_table']/tbody//td[@name='td_quantity']" position="after">
+            <td name="td_pieces" class="text-end">
+                <span t-field="line.pieces_per_case"/>
+            </td>
+            <td name="td_price_piece" class="text-end">
+                <span t-field="line.price_per_piece"/>
+            </td>
+        </xpath>
+
+        <!-- Add company and bank details at the bottom -->
+        <xpath expr="//p[@name='payment_communication']" position="after">
+            <div class="row mt-4" style="page-break-inside: avoid;">
+                <!-- Company Bank Details -->
+                <div class="col-12">
+                    <table class="table table-sm" style="font-size: 10pt;">
+                        <tbody>
+                            <tr>
+                                <td style="width: 70%; vertical-align: top; padding: 5px;">
+                                    <strong>Company's Bank Details:</strong><br/>
+                                    <t t-if="o.partner_bank_id">
+                                        <strong>A/c Holder's Name:</strong> <span t-field="o.company_id.name"/><br/>
+                                        <strong>Bank Name:</strong> <span t-field="o.partner_bank_id.bank_id.name"/><br/>
+                                        <strong>A/c No.:</strong> <span t-field="o.partner_bank_id.acc_number"/><br/>
+                                        <strong>Branch &amp; IFS Code:</strong> <span t-field="o.partner_bank_id.bank_id.bic"/>
+                                    </t>
+                                    <t t-else="">
+                                        <em>No bank account configured</em>
+                                    </t>
+                                </td>
+                                <td style="width: 30%; vertical-align: top; padding: 5px; text-align: right;">
+                                    <strong>For <span t-field="o.company_id.name"/></strong><br/><br/><br/>
+                                    <span>Authorized Signatory</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </xpath>
+        
+    </template>
+</odoo>

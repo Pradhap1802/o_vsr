@@ -10,6 +10,7 @@
             <xpath expr="//field[@name='name']" position="after">
                 <label for="partner_type" string="Partner Type" style="font-size: 12px;"/>
                 <field name="partner_type" style="max-width: 150px; font-size: 15px;"/>
+                <field name="division" placeholder="e.g., AP ANANTHAPURM DIVISION"/>
             </xpath>
         </field>
     </record>
@@ -23,6 +24,7 @@
             <!-- Add partner_type field after the complete_name field -->
             <xpath expr="//field[@name='complete_name']" position="after">
                 <field name="partner_type" string="Partner Type" optional="show"/>
+                <field name="division" string="Division" optional="show"/>
             </xpath>
         </field>
     </record>
@@ -40,6 +42,7 @@
             </xpath>
             <xpath expr="//group[@name='group_by']" position="inside">
                 <filter string="Partner Type" name="group_partner_type" context="{'group_by': 'partner_type'}"/>
+                <filter string="Division" name="group_division" context="{'group_by': 'division'}"/>
             </xpath>
         </field>
     </record>

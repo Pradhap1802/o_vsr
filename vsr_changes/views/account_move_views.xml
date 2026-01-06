@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add division field to invoice tree view -->
+    <record id="view_invoice_tree_division" model="ir.ui.view">
+        <field name="name">account.move.tree.division</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <!-- Add division field after invoice_date (since partner_id might be missing) -->
+            <xpath expr="//field[@name='invoice_date']" position="after">
+                <field name="partner_division" string="Division" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add division field to vendor bill tree view -->
+    <record id="view_bill_tree_division" model="ir.ui.view">
+        <field name="name">account.move.bill.tree.division</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_date']" position="after">
+                <field name="partner_division" string="Division" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add division grouping to invoice search view -->
+    <record id="view_account_invoice_filter_division" model="ir.ui.view">
+        <field name="name">account.move.search.division</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <!-- Target salesperson filter to ensure we are in the Group By section -->
+            <xpath expr="//filter[@name='salesperson']" position="after">
+                <filter string="Division" name="group_division" context="{'group_by': 'partner_division'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add vehicle and delivery fields to invoice form -->
+    <record id="view_move_form_vsr" model="ir.ui.view">
+        <field name="name">account.move.form.vsr</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_date']" position="after">
+                <field name="vsr_vehicle_number"/>
+                <field name="delivery_number"/>
+                <field name="destination"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='price_unit']" position="before">
+                <field name="pieces_per_case"/>
+                <field name="price_per_piece"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
