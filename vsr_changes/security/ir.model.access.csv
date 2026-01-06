@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_vsr_stock_statement_wizard,vsr.stock.statement.wizard,model_vsr_stock_statement_wizard,stock.group_stock_user,1,1,1,1
 access_maintenance_spare_part_line,maintenance.spare.part.line,model_maintenance_spare_part_line,base.group_user,1,1,1,1
+access_maintenance_equipment_spare_part,maintenance.equipment.spare.part,model_maintenance_equipment_spare_part,base.group_user,1,1,1,1

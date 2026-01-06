@@ -257,5 +257,43 @@
                   parent="quality_control.menu_quality_root" 
                   action="action_pickle_analysis" 
                   sequence="100"/>
+        <!-- Pivot View -->
+        <record id="view_pickle_analysis_pivot" model="ir.ui.view">
+            <field name="name">pickle.analysis.pivot</field>
+            <field name="model">pickle.analysis</field>
+            <field name="arch" type="xml">
+                <pivot string="Pickle Analysis">
+                    <field name="date" type="row" interval="month"/>
+                    <field name="factor_acidity" type="measure"/>
+                    <field name="salt_factor" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_pickle_analysis_graph" model="ir.ui.view">
+            <field name="name">pickle.analysis.graph</field>
+            <field name="model">pickle.analysis</field>
+            <field name="arch" type="xml">
+                <graph string="Pickle Analysis">
+                    <field name="date"/>
+                    <field name="factor_acidity" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Reporting Action -->
+        <record id="action_pickle_analysis_reporting" model="ir.actions.act_window">
+            <field name="name">Pickle Analysis</field>
+            <field name="res_model">pickle.analysis</field>
+            <field name="view_mode">pivot,graph</field>
+        </record>
+
+        <!-- Reporting Menu -->
+        <menuitem id="menu_pickle_analysis_reporting"
+                  name="Pickle Analysis"
+                  parent="quality_control.menu_quality_reporting"
+                  action="action_pickle_analysis_reporting"
+                  sequence="20"/>
     </data>
 </odoo>

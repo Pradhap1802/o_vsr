@@ -1,3 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_pickle_analysis_user,pickle.analysis.user,model_pickle_analysis,base.group_user,1,1,1,1
 access_pickle_analysis_line_user,pickle.analysis.line.user,model_pickle_analysis_line,base.group_user,1,1,1,1
+access_risk_assessment_user,risk.assessment.user,model_risk_assessment,base.group_user,1,1,1,1
+access_risk_assessment_line_user,risk.assessment.line.user,model_risk_assessment_line,base.group_user,1,1,1,1
+access_vsr_coa_user,vsr.coa.user,model_vsr_coa,base.group_user,1,1,1,1
+access_vsr_coa_line_user,vsr.coa.line.user,model_vsr_coa_line,base.group_user,1,1,1,1

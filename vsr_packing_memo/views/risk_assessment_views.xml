@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Sequence -->
+        <record id="seq_risk_assessment" model="ir.sequence">
+            <field name="name">Risk Assessment No</field>
+            <field name="code">risk.assessment</field>
+            <field name="prefix">RA</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_risk_assessment_tree" model="ir.ui.view">
+            <field name="name">risk.assessment.tree</field>
+            <field name="model">risk.assessment</field>
+            <field name="arch" type="xml">
+                <list string="Risk Assessments">
+                    <field name="name"/>
+                    <field name="project_title"/>
+                    <field name="date_prepared"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_risk_assessment_form" model="ir.ui.view">
+            <field name="name">risk.assessment.form</field>
+            <field name="model">risk.assessment</field>
+            <field name="arch" type="xml">
+                <form string="Risk Assessment">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="project_title"/>
+                                <field name="project_no"/>
+                            </group>
+                            <group>
+                                <field name="date_prepared"/>
+                            </group>
+                        </group>
+                        <separator string="Task/Activity"/>
+                        <field name="task_activity" placeholder="Task/Activity Description"/>
+                        
+                        <notebook>
+                            <page string="Hazards">
+                                <field name="hazard_ids">
+                                    <list editable="bottom">
+                                        <field name="ref"/>
+                                        <field name="hazard_description"/>
+                                        <field name="likelihood"/>
+                                        <field name="severity"/>
+                                        <field name="risk_score" widget="badge" decoration-danger="risk_score >= 10" decoration-warning="risk_score >= 5 and risk_score &lt; 10" decoration-success="risk_score &lt; 5"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Persons &amp; PPE">
+                                <group>
+                                    <group string="Persons Affected">
+                                        <field name="person_operative"/>
+                                        <field name="person_other_worker"/>
+                                        <field name="person_other"/>
+                                        <field name="person_public"/>
+                                        <field name="person_manager"/>
+                                        <field name="person_visitor"/>
+                                        <field name="person_young"/>
+                                    </group>
+                                    <group string="PPE Requirements">
+                                        <field name="ppe_harness"/>
+                                        <field name="ppe_hearing"/>
+                                        <field name="ppe_gloves"/>
+                                        <field name="ppe_hiviz"/>
+                                        <field name="ppe_eye"/>
+                                        <field name="ppe_boots"/>
+                                        <field name="ppe_respiratory"/>
+                                        <field name="ppe_head"/>
+                                        <field name="ppe_overalls"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_risk_assessment" model="ir.actions.act_window">
+            <field name="name">Construction Risk Assessment</field>
+            <field name="res_model">risk.assessment</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_risk_assessment"
+                  name="Risk Assessment"
+                  parent="quality_control.menu_quality_root"
+                  action="action_risk_assessment"
+                  sequence="110"/>
+                  
+        <!-- Pivot View (Line) -->
+        <record id="view_risk_assessment_line_pivot" model="ir.ui.view">
+            <field name="name">risk.assessment.line.pivot</field>
+            <field name="model">risk.assessment.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Risk Analysis">
+                    <field name="project_title" type="row"/>
+                    <field name="risk_score" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View (Line) -->
+        <record id="view_risk_assessment_line_graph" model="ir.ui.view">
+            <field name="name">risk.assessment.line.graph</field>
+            <field name="model">risk.assessment.line</field>
+            <field name="arch" type="xml">
+                <graph string="Risk Analysis" type="bar">
+                    <field name="project_title"/>
+                    <field name="risk_score" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Reporting Action -->
+        <record id="action_risk_assessment_reporting" model="ir.actions.act_window">
+            <field name="name">Risk Assessment Analysis</field>
+            <field name="res_model">risk.assessment.line</field>
+            <field name="view_mode">pivot,graph</field>
+        </record>
+
+        <!-- Reporting Menu -->
+        <menuitem id="menu_risk_assessment_reporting"
+                  name="Risk Assessment"
+                  parent="quality_control.menu_quality_reporting"
+                  action="action_risk_assessment_reporting"
+                  sequence="30"/>
+    </data>
+</odoo>
