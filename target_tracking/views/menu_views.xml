@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu item under Sales > Customers -->
+    <menuitem
+        id="menu_target_tracking"
+        name="Target Tracking"
+        parent="sale.sale_order_menu"
+        action="action_target_tracking"
+        sequence="5"/>
+</odoo>
