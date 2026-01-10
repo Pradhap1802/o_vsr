@@ -9,33 +9,24 @@ class ResPartner(models.Model):
         help='District or region for grouping customers'
     )
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        """Create target tracking record when a customer is created"""
-        partners = super(ResPartner, self).create(vals_list)
-        
-        # Create target tracking records for customers
-        tracking_vals = []
-        for partner in partners:
-            # Check if this is a customer (either customer_rank > 0 or partner_type = 'customer')
-            is_customer = partner.customer_rank > 0
-            if hasattr(partner, 'partner_type') and partner.partner_type == 'customer':
-                is_customer = True
-            
-            if is_customer:
-                tracking_vals.append({
-                    'partner_id': partner.id,
-                    'super_stockiest_id': partner.id,  # Automatically set to same customer
-                })
-        
-        if tracking_vals:
-            self.env['target.tracking'].create(tracking_vals)
-        
-        return partners
-
     def write(self, vals):
         """Update target tracking records when partner is updated"""
         result = super(ResPartner, self).write(vals)
+        
+        # Auto-create target.tracking.state if state_id is set on a customer
+        if 'state_id' in vals:
+            for partner in self:
+                if partner.customer_rank > 0 and partner.state_id:
+                    # Check if state already exists in target.tracking.state
+                    existing_state = self.env['target.tracking.state'].search([
+                        ('state_id', '=', partner.state_id.id)
+                    ], limit=1)
+                    
+                    # Create if doesn't exist
+                    if not existing_state:
+                        self.env['target.tracking.state'].create({
+                            'state_id': partner.state_id.id
+                        })
         
         # Update related target tracking records if district, name, phone, or parent changes
         if any(field in vals for field in ['district', 'name', 'phone', 'parent_id']):

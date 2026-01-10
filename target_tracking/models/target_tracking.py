@@ -95,6 +95,48 @@ class TargetTracking(models.Model):
         for record in self:
             record.pending_target = record.jan_target - record.target_achieved
     
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Auto-create target.tracking.state when creating target tracking records"""
+        records = super(TargetTracking, self).create(vals_list)
+        
+        # Auto-create state records for new target tracking records
+        for record in records:
+            if record.state_id:
+                # Check if state already exists
+                existing_state = self.env['target.tracking.state'].search([
+                    ('state_id', '=', record.state_id.id)
+                ], limit=1)
+                
+                # Create if doesn't exist
+                if not existing_state:
+                    self.env['target.tracking.state'].create({
+                        'state_id': record.state_id.id
+                    })
+        
+        return records
+    
+    def write(self, vals):
+        """Auto-create target.tracking.state when updating state_id"""
+        result = super(TargetTracking, self).write(vals)
+        
+        # Auto-create state if state_id is being set/changed
+        if 'state_id' in vals:
+            for record in self:
+                if record.state_id:
+                    # Check if state already exists
+                    existing_state = self.env['target.tracking.state'].search([
+                        ('state_id', '=', record.state_id.id)
+                    ], limit=1)
+                    
+                    # Create if doesn't exist
+                    if not existing_state:
+                        self.env['target.tracking.state'].create({
+                            'state_id': record.state_id.id
+                        })
+        
+        return result
+    
     @api.constrains('date_from', 'date_to')
     def _check_date_range(self):
         """Ensure date_to is greater than or equal to date_from"""
@@ -199,5 +241,10 @@ class TargetTracking(models.Model):
             i += 1
         
         _logger.info(f"Target Tracking search - Transformed args: {new_args}")
-        return super().search(new_args, offset=offset, limit=limit, order=order, count=count)
+        
+        # Handle count parameter correctly
+        if count:
+            return super().search_count(new_args)
+        else:
+            return super().search(new_args, offset=offset, limit=limit, order=order)
 
