@@ -112,24 +112,24 @@
                             <tbody>
                                 <t t-foreach="o.line_ids" t-as="line">
                                     <tr>
-                                        <td style="border: 1px solid black; padding: 5px; text-align: center;"><span t-field="line.parameter"/></td>
-                                        <td style="border: 1px solid black; padding: 5px; text-align: center;"><span t-field="line.uom"/></td>
-                                        <td style="border: 1px solid black; padding: 5px; text-align: center;"><span t-field="line.result"/></td>
-                                        <td style="border: 1px solid black; padding: 5px; text-align: center;"><span t-field="line.standard"/></td>
-                                        <td style="border: 1px solid black; padding: 5px; text-align: center;"><span t-field="line.test_method"/></td>
+                                        <td style="border: 1px solid black; padding: 15px; text-align: center;"><span t-field="line.parameter"/></td>
+                                        <td style="border: 1px solid black; padding: 15px; text-align: center;"><span t-field="line.uom"/></td>
+                                        <td style="border: 1px solid black; padding: 15px; text-align: center;"><span t-field="line.result"/></td>
+                                        <td style="border: 1px solid black; padding: 15px; text-align: center;"><span t-field="line.standard"/></td>
+                                        <td style="border: 1px solid black; padding: 15px; text-align: center;"><span t-field="line.test_method"/></td>
                                     </tr>
                                 </t>
                                 <!-- Footer within table for Brine/Salted or All? -->
                                 <tr>
-                                    <td style="border: 1px solid black; padding: 5px; font-weight: bold;">Exp.Date</td>
-                                    <td colspan="4" style="border: 1px solid black; padding: 5px;"><span t-field="o.exp_date_text"/></td>
+                                    <td style="border: 1px solid black; padding: 10px; font-weight: bold;">Exp.Date</td>
+                                    <td colspan="4" style="border: 1px solid black; padding: 10px;"><span t-field="o.exp_date_text"/></td>
                                 </tr>
                                 <tr>
-                                    <td style="border: 1px solid black; padding: 5px; font-weight: bold;">Variety Of Pickle</td>
-                                    <td colspan="4" style="border: 1px solid black; padding: 5px;"><span t-field="o.variety_of_pickle"/></td>
+                                    <td style="border: 1px solid black; padding: 10px; font-weight: bold;">Variety Of Pickle</td>
+                                    <td colspan="4" style="border: 1px solid black; padding: 10px;"><span t-field="o.variety_of_pickle"/></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" style="border: 1px solid black; padding: 5px;">
+                                    <td colspan="5" style="border: 1px solid black; padding: 10px;">
                                         <strong>COMMENT:</strong> <span t-field="o.comment"/>
                                         <br/><br/>
                                     </td>
