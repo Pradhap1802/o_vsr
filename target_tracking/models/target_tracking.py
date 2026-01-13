@@ -72,18 +72,18 @@ class TargetTracking(models.Model):
     )
     
     jan_target = fields.Float(
-        string='Target(Case)',
+        string='Target',
         default=0.0
     )
     
     target_achieved = fields.Float(
-        string='Target Achieved(Case)',
+        string='Target Achieved',
         default=0.0,
         readonly=True
     )
     
     pending_target = fields.Float(
-        string='Pending Target(Case)',
+        string='Pending Target',
         compute='_compute_pending_target',
         store=True
     )

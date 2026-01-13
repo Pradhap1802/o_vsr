@@ -102,11 +102,11 @@
                 <field name="partner_id" options="{'no_create': True}" width="230px"/>
                 <field name="salesperson_id" width="150px"/>
                 <field name="phone" readonly="1" width="120px"/>
-                <field name="date_from" width="120px"/>
-                <field name="date_to" width="120px"/>
-                <field name="jan_target" width="150px"/>
-                <field name="target_achieved" readonly="1" width="150px"/>
-                <field name="pending_target" readonly="1" width="150px"/>
+                <field name="date_from" width="100px"/>
+                <field name="date_to" width="100px"/>
+                <field name="jan_target" width="130px"/>
+                <field name="target_achieved" readonly="1" width="130px"/>
+                <field name="pending_target" readonly="1" width="130px"/>
                 <button name="action_open_form" type="object" string="View" icon="fa-external-link"/>
             </list>
         </field>
