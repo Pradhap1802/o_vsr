@@ -37,7 +37,7 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="production_type" optional="show"/>
-                    <field name="memo_no" optional="show"/>
+                    <field name="memo_no" optional="show" column_invisible="context.get('default_production_type') == 'packing_memo'"/>
                 </field>
             </field>
         </record>

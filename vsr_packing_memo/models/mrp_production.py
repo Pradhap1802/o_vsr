@@ -122,3 +122,32 @@ class MrpProduction(models.Model):
         ('pass', 'Pass'),
         ('fail', 'Fail'),
     ], string='Overall Quality', default='pass')
+
+    def get_extracted_product_weight(self):
+        """
+        Returns the unit weight of the finished product.
+        Methodology:
+        1. Access self.product_id.weight (Standard Odoo field).
+        2. If > 0, return it.
+        3. If 0, verify if product name contains a weight pattern (e.g. "2.5 Kg", "5kg").
+        4. Extract the float value.
+        5. Return extracted value or 0.0.
+        """
+        self.ensure_one()
+        product = self.product_id
+        if product.weight > 0:
+            return product.weight
+        
+        # Fallback: Extract from Name
+        name = product.name or ""
+        # Match number followed by optional space and kg/Kg/KG
+        # Group 1 is the number
+        import re
+        match = re.search(r'(\d+(\.\d+)?) ?[kK][gG]', name)
+        if match:
+            try:
+                return float(match.group(1))
+            except ValueError:
+                pass
+        
+        return 0.0

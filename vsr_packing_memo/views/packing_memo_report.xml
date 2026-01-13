@@ -2,6 +2,22 @@
 <odoo>
     <data>
         <!-- Report Action -->
+        <!-- Paper Format -->
+        <record id="paperformat_vsr_packing_memo" model="report.paperformat">
+            <field name="name">VSR Packing Memo Paper Format</field>
+            <field name="default" eval="False"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <!-- Report Action -->
         <record id="action_report_packing_memo" model="ir.actions.report">
             <field name="name">Packing Memo</field>
             <field name="model">mrp.production</field>
@@ -11,6 +27,7 @@
             <field name="print_report_name">'Packing Memo - %s' % object.name</field>
             <field name="binding_model_id" ref="mrp.model_mrp_production"/>
             <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="paperformat_vsr_packing_memo"/>
         </record>
 
         <!-- Report Template -->
@@ -18,6 +35,17 @@
             <t t-call="web.html_container">
                 <div class="page" style="padding: 10px !important; margin: 0 !important;">
                     <!-- Header with Title and Date -->
+                    <!-- Company Header -->
+                    <div style="width: 100%; display: table; margin-bottom: 15px;">
+                        <div style="display: table-cell; width: 50%; vertical-align: top;">
+                             <img t-if="docs and docs[0].company_id.logo" t-att-src="'data:image/png;base64,%s' % docs[0].company_id.logo.decode('utf-8')" style="max-height: 80px;" alt="Logo"/>
+                        </div>
+                        <div style="display: table-cell; width: 50%; text-align: right; vertical-align: top; font-size: 12px;">
+                             <span t-field="docs[0].company_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                        </div>
+                    </div>
+
+                    <!-- Title and Date -->
                     <div style="margin: 0; padding: 0; position: relative;">
                         <h3 style="text-align: center; margin: 0 0 10px 0; padding: 0;">Packing Memo</h3>
                         <div style="position: absolute; top: 0; right: 0; font-size: 11px;">
@@ -85,6 +113,10 @@
                             <!-- Loop through all manufacturing orders -->
                             <t t-foreach="docs" t-as="o">
                                 <t t-set="raw_moves" t-value="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')"/>
+                                <!-- Pre-calculate values for multiple columns -->
+                                <t t-set="finished_scraps" t-value="o.scrap_ids.filtered(lambda s: s.state == 'done' and s.product_id == o.product_id)"/>
+                                <t t-set="wastage_qty" t-value="sum(finished_scraps.mapped('scrap_qty'))"/>
+                                <t t-set="pieces" t-value="o.product_id.pieces_per_case or 1"/>
                                 
                                 <!-- Row for this manufacturing order -->
                                 <tr>
@@ -135,8 +167,15 @@
                                                 </t>
                                             </div>
                                         </t>
-                                        <t t-if="not raw_moves">
+                                        <t t-if="not raw_moves and wastage_qty == 0">
                                             <span>-</span>
+                                        </t>
+                                        
+                                        <!-- Display Finished Product Wastage if any -->
+                                        <t t-if="wastage_qty > 0">
+                                            <div style="font-weight: bold; margin-top: 5px; border-top: 1px dashed #ccc;">
+                                                Pickle: <span t-esc="'%.2f' % wastage_qty"/>
+                                            </div>
                                         </t>
                                     </td>
                                     <td class="text-center">
@@ -155,8 +194,22 @@
                                         </t>
                                     </td>
                                     <td class="text-right">
-                                        <!-- Pickle Issue in kg - Final Product Quantity -->
-                                        <span t-esc="'%.2f' % o.qty_produced if o.qty_produced else '%.2f' % o.product_qty"/>
+                                        <!-- Pickle Issue in kg -->
+                                        <t t-set="produced_qty" t-value="o.qty_produced if o.qty_produced else o.product_qty"/>
+                                        <t t-set="unit_weight" t-value="o.get_extracted_product_weight()"/>
+                                        
+                                        <t t-set="issue_in_kg" t-value="(produced_qty * unit_weight * pieces) - wastage_qty"/>
+                                        
+                                        <span t-esc="'%.2f' % issue_in_kg"/>
+                                        <!-- <div style="font-size: 7px; color: grey;">
+                                            (<span t-esc="'%.2f' % produced_qty"/> * 
+                                             <span t-esc="'%.2f' % unit_weight"/> * 
+                                             <span t-esc="pieces"/>) - 
+                                             <span t-esc="'%.2f' % wastage_qty"/>
+                                        </div> -->
+                                        <t t-if="unit_weight == 0">
+                                            <div style="color: red; font-size: 8px;">(Wt=0, Wt not found in Name)</div>
+                                        </t>
                                     </td>
                                     <td>
                                         <!-- Remarks from scrap reason tags -->
@@ -186,10 +239,53 @@
                         </tbody>
                     </table>
 
+                    <!-- Wastage Summary and Signatory -->
+                    <div class="row mt-4" style="font-size: 11px; page-break-inside: avoid;">
+                        <!-- Wastage Breakdown -->
+                        <div class="col-6">
+                             <t t-set="all_scraps" t-value="docs.mapped('scrap_ids').filtered(lambda s: s.state == 'done')"/>
+                             <t t-set="finished_products" t-value="docs.mapped('product_id')"/>
+                             
+                             <!-- Pickle Wastage -->
+                             <t t-set="pickle_scraps" t-value="all_scraps.filtered(lambda s: s.product_id in finished_products)"/>
+                             <t t-if="pickle_scraps">
+                                 <strong style="text-decoration: underline;">Pickle Wastage:</strong>
+                                 <ul style="list-style-type: none; padding-left: 0; margin-top: 5px;">
+                                     <t t-foreach="pickle_scraps.mapped('product_id').sorted(key=lambda p: p.display_name)" t-as="p">
+                                          <t t-set="qty" t-value="sum(pickle_scraps.filtered(lambda s: s.product_id == p).mapped('scrap_qty'))"/>
+                                          <li><span t-field="p.display_name"/>: <span t-esc="'%.2f' % qty"/></li>
+                                     </t>
+                                 </ul>
+                             </t>
+                             
+                             <!-- Raw Material Wastage -->
+                             <t t-set="raw_scraps" t-value="all_scraps.filtered(lambda s: s.product_id not in finished_products)"/>
+                             <t t-if="raw_scraps">
+                                 <strong style="text-decoration: underline;">Raw Material Wastage:</strong>
+                                 <ul style="list-style-type: none; padding-left: 0; margin-top: 5px;">
+                                     <t t-foreach="raw_scraps.mapped('product_id').sorted(key=lambda p: p.display_name)" t-as="p">
+                                          <t t-set="qty" t-value="sum(raw_scraps.filtered(lambda s: s.product_id == p).mapped('scrap_qty'))"/>
+                                          <li><span t-field="p.display_name"/>: <span t-esc="'%.2f' % qty"/></li>
+                                     </t>
+                                 </ul>
+                             </t>
+                        </div>
+                        
+                        <!-- Authorized Signatory -->
+                        <div class="col-6 text-end" style="position: relative;">
+                            <div style="float: right; width: 200px; text-align: center; margin-top: 30px;">
+                                <div style="height: 40px;"></div>
+                                <div style="border-top: 1px solid black; padding-top: 5px;">
+                                    <strong>Authorized Signatory</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Footer Information -->
-                    <div class="row mt-3" style="font-size: 10px; margin-top: 10px;">
+                    <div class="row mt-3" style="font-size: 10px; margin-top: 20px !important;">
                         <div class="col-12 text-center">
-                            <strong>Total Manufacturing Orders:</strong> <span t-esc="len(docs)"/>
+                            <strong>Total Packing Orders:</strong> <span t-esc="len(docs)"/>
                         </div>
                     </div>
                 </div>
