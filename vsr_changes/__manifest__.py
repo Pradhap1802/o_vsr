@@ -32,6 +32,8 @@
         'views/report_stock_statement.xml',
         'report/mrp_order.xml',
         'views/maintenance_views.xml',
+        'views/cold_storage_views.xml',
+        'views/report_cold_storage.xml',
     ],
     'assets': {
         'web.assets_backend': [

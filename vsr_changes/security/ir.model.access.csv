@@ -2,3 +2,9 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_vsr_stock_statement_wizard,vsr.stock.statement.wizard,model_vsr_stock_statement_wizard,stock.group_stock_user,1,1,1,1
 access_maintenance_spare_part_line,maintenance.spare.part.line,model_maintenance_spare_part_line,base.group_user,1,1,1,1
 access_maintenance_equipment_spare_part,maintenance.equipment.spare.part,model_maintenance_equipment_spare_part,base.group_user,1,1,1,1
+access_cold_storage_manager,cold.storage.manager,model_cold_storage,stock.group_stock_manager,1,1,1,1
+access_cold_storage_user,cold.storage.user,model_cold_storage,stock.group_stock_user,1,1,1,1
+access_cold_storage_stock_line_manager,cold.storage.stock.line.manager,model_cold_storage_stock_line,stock.group_stock_manager,1,1,1,1
+access_cold_storage_stock_line_user,cold.storage.stock.line.user,model_cold_storage_stock_line,stock.group_stock_user,1,1,1,1
+access_cold_storage_payment_line_manager,cold.storage.payment.line.manager,model_cold_storage_payment_line,stock.group_stock_manager,1,1,1,1
+access_cold_storage_payment_line_user,cold.storage.payment.line.user,model_cold_storage_payment_line,stock.group_stock_user,1,1,1,1
