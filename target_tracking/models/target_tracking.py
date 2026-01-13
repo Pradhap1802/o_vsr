@@ -12,7 +12,7 @@ class TargetTracking(models.Model):
 
     partner_id = fields.Many2one(
         'res.partner',
-        string='Super Stockiest Name',
+        string='Customer Name',
         required=True,
         domain="[('customer_rank', '>', 0)]",
         ondelete='cascade',
@@ -44,6 +44,14 @@ class TargetTracking(models.Model):
         help='Select the super stockiest customer'
     )
     
+    salesperson_id = fields.Many2one(
+        'res.users',
+        string='Salesperson',
+        domain="[('share', '=', False)]",
+        help='Salesperson responsible for this target',
+        index=True
+    )
+    
     phone = fields.Char(
         string='Phone',
         store=True,
@@ -64,18 +72,18 @@ class TargetTracking(models.Model):
     )
     
     jan_target = fields.Float(
-        string='Target',
+        string='Target(Case)',
         default=0.0
     )
     
     target_achieved = fields.Float(
-        string='Target Achieved',
+        string='Target Achieved(Case)',
         default=0.0,
         readonly=True
     )
     
     pending_target = fields.Float(
-        string='Pending Target',
+        string='Pending Target(Case)',
         compute='_compute_pending_target',
         store=True
     )

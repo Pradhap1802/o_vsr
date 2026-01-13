@@ -72,6 +72,7 @@
                             <field name="district"/>
                             <field name="taluka_name"/>
                             <field name="phone"/>
+                            <field name="salesperson_id"/>
                         </group>
                         <group string="Target Period">
                             <field name="date_from"/>
@@ -99,6 +100,7 @@
                 <field name="district" readonly="1" width="150px"/>
                 <field name="taluka_name" readonly="1" width="200px"/>
                 <field name="partner_id" options="{'no_create': True}" width="230px"/>
+                <field name="salesperson_id" width="150px"/>
                 <field name="phone" readonly="1" width="120px"/>
                 <field name="date_from" width="120px"/>
                 <field name="date_to" width="120px"/>
@@ -145,6 +147,7 @@
             <search>
                 <field name="taluka_name"/>
                 <field name="partner_id"/>
+                <field name="salesperson_id"/>
                 <field name="phone"/>
                 <field name="district"/>
                 <field name="state_id"/>
