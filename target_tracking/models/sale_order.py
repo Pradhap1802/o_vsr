@@ -1,8 +1,27 @@
-from odoo import models, api
+from odoo import models, api, fields
 
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
+    
+    user_id = fields.Many2one(
+        'res.users',
+        default=lambda self: self.env.user
+    )
+    
+    partner_id = fields.Many2one(
+        'res.partner',
+        domain="[('user_id', '=', user_id)]"
+    )
+    
+    @api.onchange('user_id')
+    def _onchange_user_id_filter_partners(self):
+        """Filter partner_id based on selected salesperson"""
+        if self.user_id:
+            return {'domain': {'partner_id': [('user_id', '=', self.user_id.id)]}}
+        else:
+            # If no salesperson selected, show all customers
+            return {'domain': {'partner_id': [('customer_rank', '>', 0)]}}
 
     def action_confirm(self):
         """Override action_confirm to update target tracking when order is confirmed"""
