@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Quality Check Form View to add product-specific fields -->
+    <record id="view_quality_check_form_inherit" model="ir.ui.view">
+        <field name="name">quality.check.form.inherit</field>
+        <field name="model">quality.check</field>
+        <field name="inherit_id" ref="quality_control.quality_check_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add product type field after product_id -->
+            <field name="product_id" position="after">
+                <field name="product_type" readonly="1"/>
+            </field>
+
+            <!-- Add notebook page for product-specific specifications (for full form view) -->
+
+            <xpath expr="//notebook" position="inside">
+                <!-- WAD Specifications Tab -->
+                <page string="WAD Specifications" invisible="product_type != 'wad'">
+                    <group>
+                        <group>
+                            <field name="wad_type"/>
+                            <field name="thickness_spec"/>
+                            <field name="size_dia_spec"/>
+                            <field name="weight_piece_spec"/>
+                        </group>
+                        <group>
+                            <field name="nos_kg_spec"/>
+                            <field name="gumming"/>
+                            <field name="damage_free"/>
+                            <field name="wad_ok"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="wad_remarks"/>
+                    </group>
+                </page>
+
+                <!-- JAR Specifications Tab -->
+                <page string="JAR Specifications" invisible="product_type != 'jar'">
+                    <group>
+                        <group>
+                            <field name="jar_capacity"/>
+                            <field name="height_spec"/>
+                            <field name="diameter_spec"/>
+                            <field name="neck_size_spec"/>
+                            <field name="weight_piece_jar_spec"/>
+                        </group>
+                        <group>
+                            <field name="no_cracks"/>
+                            <field name="no_white_shading"/>
+                            <field name="neck_straight"/>
+                            <field name="jar_ok"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="jar_remarks"/>
+                    </group>
+                </page>
+
+                <!-- LABEL Specifications Tab -->
+                <page string="LABEL Specifications" invisible="product_type != 'label'">
+                    <group>
+                        <group>
+                            <field name="label_type"/>
+                            <field name="width_spec"/>
+                            <field name="height_label_spec"/>
+                            <field name="printing"/>
+                            <field name="colour"/>
+                        </group>
+                        <group>
+                            <field name="cutting"/>
+                            <field name="gumming_label"/>
+                            <field name="ingredients"/>
+                            <field name="barcode_no"/>
+                            <field name="label_ok"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="label_remarks"/>
+                    </group>
+                </page>
+
+                <!-- POUCH/ROLL Specifications Tab -->
+                <page string="POUCH/ROLL Specifications" invisible="product_type != 'pouch_roll'">
+                    <group>
+                        <group>
+                            <field name="pouch_type"/>
+                            <field name="width_pouch_spec"/>
+                            <field name="height_pouch_spec"/>
+                            <field name="bottom_gusset_spec"/>
+                        </group>
+                        <group>
+                            <field name="nos_kg_pouch_spec"/>
+                            <field name="weight_piece_pouch_spec"/>
+                            <field name="no_delamination"/>
+                            <field name="pouch_ok"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="pouch_remarks"/>
+                    </group>
+                </page>
+
+                <!-- CARTON/COTTON BOX Specifications Tab -->
+                <page string="CARTON Specifications" invisible="product_type != 'carton'">
+                    <group>
+                        <group>
+                            <field name="box_type"/>
+                            <field name="length_spec"/>
+                            <field name="width_carton_spec"/>
+                            <field name="height_carton_spec"/>
+                        </group>
+                        <group>
+                            <field name="ply_spec"/>
+                            <field name="capacity_spec"/>
+                            <field name="printing_carton"/>
+                            <field name="carton_ok"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="carton_remarks"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit Quality Check Tree View to add product type -->
+    <record id="view_quality_check_tree_inherit" model="ir.ui.view">
+        <field name="name">quality.check.tree.inherit</field>
+        <field name="model">quality.check</field>
+        <field name="inherit_id" ref="quality_control.quality_check_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="product_type"/>
+            </field>
+        </field>
+    </record>
+</odoo>
