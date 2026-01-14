@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Note: Quality Check button is already provided by quality_control module -->
+    <!-- Our module extends the quality.check model with product-specific fields -->
+    <!-- The existing Quality Check button will work with our custom fields -->
+</odoo>
