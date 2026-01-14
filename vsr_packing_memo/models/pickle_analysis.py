@@ -60,6 +60,7 @@ class PickleAnalysisLine(models.Model):
     
     # Product Information
     product_id = fields.Many2one('product.product', string='Name of The Product', required=True)
+    lot_no = fields.Char(string='Lot No')
     batch_size = fields.Float(string='Batch Size', digits=(16, 2))
     final_batch = fields.Float(string='Final', digits=(16, 2))
     
@@ -80,7 +81,8 @@ class PickleAnalysisLine(models.Model):
     
     # Recommendations
     recommended_qty_salt = fields.Float(string='Recommended Qty of salt', digits=(16, 2))
-    recommended_qty_aa_ca = fields.Float(string='Recommended Qty of AA/CA', digits=(16, 2))
+    recommended_qty_aa = fields.Float(string='Recommended Qty of AA', digits=(16, 2))
+    recommended_qty_ca = fields.Float(string='Recommended Qty of CA', digits=(16, 2))
     remarks = fields.Text(string='Remarks')
     
     @api.depends('agno3_final', 'agno3_initial')

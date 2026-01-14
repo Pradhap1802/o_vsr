@@ -64,6 +64,7 @@
                                             <group string="Product Information">
                                                 <field name="sequence" invisible="1"/>
                                                 <field name="product_id"/>
+                                                <field name="lot_no"/>
                                                 <field name="batch_size"/>
                                             </group>
                                         </group>
@@ -87,7 +88,8 @@
                                             
                                             <group string="Recommendations">
                                                 <field name="recommended_qty_salt"/>
-                                                <field name="recommended_qty_aa_ca"/>
+                                                <field name="recommended_qty_aa"/>
+                                                <field name="recommended_qty_ca"/>
                                             </group>
                                         </group>
                                         
@@ -99,6 +101,7 @@
                                     <list editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_id"/>
+                                        <field name="lot_no"/>
                                         <field name="batch_size"/>
                                         
                                         <!-- AgNO3 Titration -->
@@ -114,8 +117,10 @@
                                         <field name="naoh_percent_acidity"/>
                                         
                                         <!-- Recommendations -->
+                                        <!-- Recommendations -->
                                         <field name="recommended_qty_salt"/>
-                                        <field name="recommended_qty_aa_ca"/>
+                                        <field name="recommended_qty_aa"/>
+                                        <field name="recommended_qty_ca"/>
                                         <field name="remarks"/>
                                     </list>
                                 </field>
@@ -138,6 +143,23 @@
             </field>
         </record>
 
+        <!-- Custom Paper Format -->
+        <record id="paperformat_pickle_analysis" model="report.paperformat">
+            <field name="name">Pickle Analysis A4</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
         <!-- Report Action -->
         <record id="action_report_pickle_analysis" model="ir.actions.report">
             <field name="name">Pickle Analysis Report</field>
@@ -148,13 +170,14 @@
             <field name="print_report_name">'Pickle Analysis - %s' % object.name</field>
             <field name="binding_model_id" ref="model_pickle_analysis"/>
             <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="paperformat_pickle_analysis"/>
         </record>
 
         <!-- Report Template -->
         <template id="report_pickle_analysis_document">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <div class="page" style="font-family: Arial, sans-serif; font-size: 10px; padding: 20px;">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 10px;">
                         
                         <!-- Header with Border -->
                         <div style="border: 2px solid black; padding: 10px; margin-bottom: 15px;">
@@ -187,12 +210,14 @@
                                 <thead>
                                     <tr style="background-color: #f0f0f0;">
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Name of The Product</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Lot No</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Batch Size</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Final</th>
                                         <th colspan="4" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">AgNO3 Titration Volume in ml</th>
                                         <th colspan="4" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">NaOH Titration Volume in ml</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of salt</th>
-                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of AA/CA</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of AA</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of CA</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Remarks</th>
                                     </tr>
                                     <tr style="background-color: #f0f0f0;">
@@ -213,6 +238,7 @@
                                     <t t-foreach="o.line_ids" t-as="line">
                                         <tr>
                                             <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.product_id.name"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.lot_no"/></td>
                                             <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.batch_size if line.batch_size else ''"/></td>
                                             <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.1f' % line.final_batch if line.final_batch else ''"/></td>
                                             
@@ -230,7 +256,8 @@
                                             
                                             <!-- Recommendations -->
                                             <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_salt if line.recommended_qty_salt else ''"/></td>
-                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_aa_ca if line.recommended_qty_aa_ca else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_aa if line.recommended_qty_aa else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_ca if line.recommended_qty_ca else ''"/></td>
                                             <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.remarks"/></td>
                                         </tr>
                                     </t>
