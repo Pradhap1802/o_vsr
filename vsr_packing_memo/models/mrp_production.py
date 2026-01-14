@@ -76,6 +76,18 @@ class MrpProduction(models.Model):
             elif hasattr(production, 'onchange_product_qty'):
                 production.onchange_product_qty()
 
+    @api.onchange('qty_per_lot')
+    def _onchange_qty_per_lot(self):
+        """Update product_qty based on quantity per lot"""
+        for production in self:
+            production.product_qty = production.qty_per_lot * production.no_of_lots
+            
+            # Retrieve the appropriate onchange method for updating components
+            if hasattr(production, '_onchange_product_qty'):
+                production._onchange_product_qty()
+            elif hasattr(production, 'onchange_product_qty'):
+                production.onchange_product_qty()
+
     packing_memo_remarks = fields.Text(
         string='Packing Memo Remarks',
         help='Additional remarks for the packing memo report'
