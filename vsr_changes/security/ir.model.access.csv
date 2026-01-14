@@ -8,3 +8,5 @@ access_cold_storage_stock_line_manager,cold.storage.stock.line.manager,model_col
 access_cold_storage_stock_line_user,cold.storage.stock.line.user,model_cold_storage_stock_line,stock.group_stock_user,1,1,1,1
 access_cold_storage_payment_line_manager,cold.storage.payment.line.manager,model_cold_storage_payment_line,stock.group_stock_manager,1,1,1,1
 access_cold_storage_payment_line_user,cold.storage.payment.line.user,model_cold_storage_payment_line,stock.group_stock_user,1,1,1,1
+access_sanitization_checklist_user,sanitization.checklist.user,model_sanitization_checklist,base.group_user,1,1,1,1
+access_sanitization_checklist_line_user,sanitization.checklist.line.user,model_sanitization_checklist_line,base.group_user,1,1,1,1

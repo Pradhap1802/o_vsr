@@ -11,7 +11,7 @@
         - Handles wastage deduction from downstream transfers
     ''',
     'author': 'Processdrive',
-    'depends': ['stock', 'sale', 'account', 'mrp', 'purchase_stock', 'l10n_in_edi_ewaybill', 'maintenance'],
+    'depends': ['stock', 'sale', 'account', 'mrp', 'purchase_stock', 'l10n_in_edi_ewaybill', 'maintenance', 'quality_control', 'quality'],
     'data': [
         'security/ir.model.access.csv',
         'views/res_partner_views.xml',
@@ -25,6 +25,7 @@
         'views/stock_scrap_views.xml',
         'views/bom_report_views.xml',
         'views/report_receipt_note.xml',
+        'views/report_purchase_order.xml',
         'views/report_invoice.xml',
         'views/report_sale_order.xml',
         'views/mrp_views.xml',
@@ -34,6 +35,7 @@
         'views/maintenance_views.xml',
         'views/cold_storage_views.xml',
         'views/report_cold_storage.xml',
+        'views/sanitization_checklist_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -43,4 +45,5 @@
     'installable': True,
     'application': False,
     'auto_install': False,
+    'license': 'LGPL-3',
 }
