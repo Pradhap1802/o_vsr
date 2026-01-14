@@ -6,6 +6,9 @@
         <field name="model">sanitization.checklist</field>
         <field name="arch" type="xml">
             <form string="Sanitization Checklist">
+                <header>
+                    <button name="%(action_report_sanitization_checklist)d" string="Print Report" type="action" class="oe_highlight"/>
+                </header>
                 <sheet>
                     <div class="oe_title text-center">
                         <h2>DAILY SANITIZATION &amp; CLEANLINESS CHECKLIST</h2>
