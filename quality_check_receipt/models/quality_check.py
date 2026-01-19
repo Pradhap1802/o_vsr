@@ -95,6 +95,18 @@ class QualityCheck(models.Model):
 
     def action_open_quality_check_wizard(self):
         """Override to open custom wizard with product-specific fields"""
+        # If multiple checks, open them in a list/form view
+        if len(self) > 1:
+            return {
+                'name': 'Quality Checks',
+                'type': 'ir.actions.act_window',
+                'res_model': 'quality.check',
+                'view_mode': 'list,form',
+                'domain': [('id', 'in', self.ids)],
+                'context': dict(self.env.context),
+            }
+        
+        # Single check - open custom wizard
         self.ensure_one()
         return {
             'name': 'Quality Check',
@@ -110,4 +122,5 @@ class QualityCheck(models.Model):
                 'quality_check_id': self.id,
             }
         }
+
 
