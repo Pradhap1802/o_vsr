@@ -10,3 +10,9 @@ access_cold_storage_payment_line_manager,cold.storage.payment.line.manager,model
 access_cold_storage_payment_line_user,cold.storage.payment.line.user,model_cold_storage_payment_line,stock.group_stock_user,1,1,1,1
 access_sanitization_checklist_user,sanitization.checklist.user,model_sanitization_checklist,base.group_user,1,1,1,1
 access_sanitization_checklist_line_user,sanitization.checklist.line.user,model_sanitization_checklist_line,base.group_user,1,1,1,1
+access_planning_sheet_user,planning.sheet.user,model_planning_sheet,sales_team.group_sale_salesman,1,1,1,1
+access_planning_sheet_manager,planning.sheet.manager,model_planning_sheet,sales_team.group_sale_manager,1,1,1,1
+access_planning_sheet_line_user,planning.sheet.line.user,model_planning_sheet_line,sales_team.group_sale_salesman,1,1,1,1
+access_planning_sheet_line_manager,planning.sheet.line.manager,model_planning_sheet_line,sales_team.group_sale_manager,1,1,1,1
+access_planning_sheet_wizard_user,planning.sheet.wizard.user,model_planning_sheet_wizard,sales_team.group_sale_salesman,1,1,1,1
+access_planning_sheet_wizard_manager,planning.sheet.wizard.manager,model_planning_sheet_wizard,sales_team.group_sale_manager,1,1,1,1

@@ -145,8 +145,13 @@
                                                 <tr>
                                                     <th style="width: 30px;">Sl.No</th>
                                                     <th style="text-align: left;">Ingredients In Kg</th>
-                                                    <!-- Dynamic Header for Lots (10 columns) -->
-                                                    <t t-foreach="range(1, 11)" t-as="col_idx">
+                                                    
+                                                    <!-- Determine active lots for this specific table (max 10) -->
+                                                    <t t-set="lots_in_table" t-value="total_lots - current_table_start"/>
+                                                    <t t-set="active_cols" t-value="10 if lots_in_table >= 10 else lots_in_table"/>
+                                                    
+                                                    <!-- Dynamic Header for Lots (only show actual lot columns) -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
                                                         <t t-set="current_lot_num" t-value="current_table_start + col_idx"/>
                                                         <th>Lot <t t-esc="'%02d' % current_lot_num"/></th>
                                                     </t>
@@ -169,12 +174,10 @@
                                                         <t t-set="line_grand_total" t-value="move.product_uom_qty"/>
                                                         <t t-set="qty_per_lot" t-value="line_grand_total / total_lots"/>
                                                         
-                                                        <t t-foreach="range(1, 11)" t-as="col_idx">
+                                                        <!-- Only show columns for actual lots -->
+                                                        <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
                                                             <td>
-                                                                <t t-if="col_idx &lt;= active_cols">
-                                                                    <span t-esc="'%.2f' % qty_per_lot"/>
-                                                                </t>
-                                                                <t t-else="">0.00</t>
+                                                                <span t-esc="'%.2f' % qty_per_lot"/>
                                                             </td>
                                                         </t>
                                                         
@@ -192,12 +195,10 @@
                                                     <t t-set="grand_total_ingredients" t-value="sum(o.move_raw_ids.filtered(lambda m: m.state != 'cancel').mapped('product_uom_qty'))"/>
                                                     <t t-set="total_per_lot" t-value="grand_total_ingredients / total_lots"/>
                                                     
-                                                    <t t-foreach="range(1, 11)" t-as="col_idx">
+                                                    <!-- Only show columns for actual lots -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
                                                         <td>
-                                                            <t t-if="col_idx &lt;= active_cols">
-                                                                <span t-esc="'%.2f' % total_per_lot"/>
-                                                            </t>
-                                                            <t t-else="">0.00</t>
+                                                            <span t-esc="'%.2f' % total_per_lot"/>
                                                         </td>
                                                     </t>
                                                     <td><span t-esc="'%.2f' % (total_per_lot * active_cols)"/></td>
@@ -209,12 +210,10 @@
                                                 
                                                 <tr>
                                                     <td colspan="2" style="text-align: right;">Less: Wastage</td>
-                                                    <t t-foreach="range(1, 11)" t-as="col_idx">
+                                                    <!-- Only show columns for actual lots -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
                                                         <td>
-                                                            <t t-if="col_idx &lt;= active_cols">
-                                                                <span t-esc="'%.2f' % wastage_per_lot"/>
-                                                            </t>
-                                                            <t t-else="">0.00</t>
+                                                            <span t-esc="'%.2f' % wastage_per_lot"/>
                                                         </td>
                                                     </t>
                                                     <td><span t-esc="'%.2f' % (wastage_per_lot * active_cols)"/></td>
@@ -224,12 +223,10 @@
                                                 <t t-set="net_total_per_lot" t-value="total_per_lot - wastage_per_lot"/>
                                                 <tr class="net-prod-row">
                                                     <td colspan="2" style="text-align: right;">Net Production (Output)</td>
-                                                    <t t-foreach="range(1, 11)" t-as="col_idx">
+                                                    <!-- Only show columns for actual lots -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
                                                         <td>
-                                                            <t t-if="col_idx &lt;= active_cols">
-                                                                <span t-esc="'%.2f' % net_total_per_lot"/>
-                                                            </t>
-                                                            <t t-else="">0.00</t>
+                                                            <span t-esc="'%.2f' % net_total_per_lot"/>
                                                         </td>
                                                     </t>
                                                     <td><span t-esc="'%.2f' % (net_total_per_lot * active_cols)"/></td>

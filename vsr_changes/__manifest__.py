@@ -37,6 +37,8 @@
         'views/report_cold_storage.xml',
         'views/report_sanitization_checklist.xml',
         'views/sanitization_checklist_views.xml',
+        'wizard/planning_sheet_wizard_views.xml',
+        'views/report_planning_sheet.xml',
     ],
     'assets': {
         'web.assets_backend': [
