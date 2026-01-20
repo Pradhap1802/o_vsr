@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Quality Check Worksheet Report (Internal) -->
+    <record id="action_report_quality_check_worksheet_internal" model="ir.actions.report">
+        <field name="name">Quality Check Worksheet (Internal)</field>
+        <field name="model">quality.check</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">quality_check_receipt.report_quality_check_worksheet_internal</field>
+        <field name="report_file">quality_check_receipt.report_quality_check_worksheet_internal</field>
+        <field name="binding_model_id" ref="model_quality_check"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Quality Check Worksheet - %s' % (object.name)</field>
+    </record>
+
+    <!-- Quality Check Worksheet Report (External) -->
+    <record id="action_report_quality_check_worksheet_external" model="ir.actions.report">
+        <field name="name">Quality Check Worksheet (External)</field>
+        <field name="model">quality.check</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">quality_check_receipt.report_quality_check_worksheet_external</field>
+        <field name="report_file">quality_check_receipt.report_quality_check_worksheet_external</field>
+        <field name="binding_model_id" ref="model_quality_check"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Quality Check Worksheet (External) - %s' % (object.name)</field>
+    </record>
+
+    <!-- Internal Worksheet Template -->
+    <template id="report_quality_check_worksheet_internal">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">Quality Check Worksheet (Internal)</h2>
+                        
+                        <!-- Header Information -->
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Quality Check:</strong> <span t-field="o.name"/><br/>
+                                <strong>Product:</strong> <span t-field="o.product_id"/><br/>
+                                <strong>Product Type:</strong> <span t-field="o.product_type"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Team:</strong> <span t-field="o.team_id"/><br/>
+                                <strong>Test Type:</strong> <span t-field="o.test_type_id"/><br/>
+                                <strong>Date:</strong> <span t-field="o.control_date"/><br/>
+                            </div>
+                        </div>
+
+                        <!-- Picking Information -->
+                        <div class="row mt-3" t-if="o.picking_id">
+                            <div class="col-12">
+                                <strong>Receipt:</strong> <span t-field="o.picking_id"/><br/>
+                                <strong>Partner:</strong> <span t-field="o.picking_id.partner_id"/><br/>
+                            </div>
+                        </div>
+
+                        <!-- WAD Specifications -->
+                        <t t-if="o.product_type == 'wad'">
+                            <h4 class="mt-4">WAD Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Wad Type:</strong></td>
+                                    <td width="50%"><span t-field="o.wad_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Thickness (Spec):</strong></td>
+                                    <td><span t-field="o.thickness_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Size / Dia (Spec - mm):</strong></td>
+                                    <td><span t-field="o.size_dia_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weight / Piece (Spec - g):</strong></td>
+                                    <td><span t-field="o.weight_piece_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nos / Kg (Spec):</strong></td>
+                                    <td><span t-field="o.nos_kg_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Gumming:</strong></td>
+                                    <td><span t-field="o.gumming"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Damage Free:</strong></td>
+                                    <td><span t-field="o.damage_free"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.wad_ok"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Remarks:</strong></td>
+                                    <td><span t-field="o.wad_remarks"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- JAR Specifications -->
+                        <t t-if="o.product_type == 'jar'">
+                            <h4 class="mt-4">JAR Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Jar Capacity:</strong></td>
+                                    <td width="50%"><span t-field="o.jar_capacity"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Diameter (Spec - mm):</strong></td>
+                                    <td><span t-field="o.diameter_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Neck Size (Spec - mm):</strong></td>
+                                    <td><span t-field="o.neck_size_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weight / Piece (Spec - g):</strong></td>
+                                    <td><span t-field="o.weight_piece_jar_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No Cracks:</strong></td>
+                                    <td><span t-field="o.no_cracks"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No White Shading:</strong></td>
+                                    <td><span t-field="o.no_white_shading"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Neck Straight:</strong></td>
+                                    <td><span t-field="o.neck_straight"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.jar_ok"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Remarks:</strong></td>
+                                    <td><span t-field="o.jar_remarks"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- LABEL Specifications -->
+                        <t t-if="o.product_type == 'label'">
+                            <h4 class="mt-4">LABEL Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Label Type:</strong></td>
+                                    <td width="50%"><span t-field="o.label_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Width (Spec - mm):</strong></td>
+                                    <td><span t-field="o.width_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_label_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Printing:</strong></td>
+                                    <td><span t-field="o.printing"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Colour:</strong></td>
+                                    <td><span t-field="o.colour"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cutting:</strong></td>
+                                    <td><span t-field="o.cutting"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Gumming:</strong></td>
+                                    <td><span t-field="o.gumming_label"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ingredients:</strong></td>
+                                    <td><span t-field="o.ingredients"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Barcode No.:</strong></td>
+                                    <td><span t-field="o.barcode_no"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.label_ok"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Remarks:</strong></td>
+                                    <td><span t-field="o.label_remarks"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- POUCH/ROLL Specifications -->
+                        <t t-if="o.product_type == 'pouch_roll'">
+                            <h4 class="mt-4">POUCH / ROLL Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Type:</strong></td>
+                                    <td width="50%"><span t-field="o.pouch_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Width (Spec - mm):</strong></td>
+                                    <td><span t-field="o.width_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bottom Gusset (Spec - mm):</strong></td>
+                                    <td><span t-field="o.bottom_gusset_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nos / Kg (Spec):</strong></td>
+                                    <td><span t-field="o.nos_kg_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weight / Piece (Spec - g):</strong></td>
+                                    <td><span t-field="o.weight_piece_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No Delamination:</strong></td>
+                                    <td><span t-field="o.no_delamination"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.pouch_ok"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Remarks:</strong></td>
+                                    <td><span t-field="o.pouch_remarks"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- CARTON Specifications -->
+                        <t t-if="o.product_type == 'carton'">
+                            <h4 class="mt-4">CARTON / COTTON BOX Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Box Type:</strong></td>
+                                    <td width="50%"><span t-field="o.box_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Length (Spec - mm):</strong></td>
+                                    <td><span t-field="o.length_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Width (Spec - mm):</strong></td>
+                                    <td><span t-field="o.width_carton_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_carton_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ply (Spec):</strong></td>
+                                    <td><span t-field="o.ply_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Capacity (Spec - Nos):</strong></td>
+                                    <td><span t-field="o.capacity_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Printing:</strong></td>
+                                    <td><span t-field="o.printing_carton"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.carton_ok"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Remarks:</strong></td>
+                                    <td><span t-field="o.carton_remarks"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- General Notes -->
+                        <div class="row mt-4" t-if="o.note">
+                            <div class="col-12">
+                                <h4>Notes</h4>
+                                <p><span t-field="o.note"/></p>
+                            </div>
+                        </div>
+
+                        <!-- Quality Result -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h4>Quality Result</h4>
+                                <p><strong>Status:</strong> <span t-field="o.quality_state"/></p>
+                                <p t-if="o.user_id"><strong>Checked By:</strong> <span t-field="o.user_id"/></p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- External Worksheet Template (Simplified version without internal details) -->
+    <template id="report_quality_check_worksheet_external">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">Quality Check Worksheet</h2>
+                        
+                        <!-- Header Information -->
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Product:</strong> <span t-field="o.product_id"/><br/>
+                                <strong>Product Type:</strong> <span t-field="o.product_type"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Test Type:</strong> <span t-field="o.test_type_id"/><br/>
+                                <strong>Date:</strong> <span t-field="o.control_date"/><br/>
+                            </div>
+                        </div>
+
+                        <!-- WAD Specifications -->
+                        <t t-if="o.product_type == 'wad'">
+                            <h4 class="mt-4">WAD Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Wad Type:</strong></td>
+                                    <td width="50%"><span t-field="o.wad_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Thickness (Spec):</strong></td>
+                                    <td><span t-field="o.thickness_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Size / Dia (Spec - mm):</strong></td>
+                                    <td><span t-field="o.size_dia_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weight / Piece (Spec - g):</strong></td>
+                                    <td><span t-field="o.weight_piece_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nos / Kg (Spec):</strong></td>
+                                    <td><span t-field="o.nos_kg_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Gumming:</strong></td>
+                                    <td><span t-field="o.gumming"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Damage Free:</strong></td>
+                                    <td><span t-field="o.damage_free"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.wad_ok"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- JAR Specifications -->
+                        <t t-if="o.product_type == 'jar'">
+                            <h4 class="mt-4">JAR Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Jar Capacity:</strong></td>
+                                    <td width="50%"><span t-field="o.jar_capacity"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Diameter (Spec - mm):</strong></td>
+                                    <td><span t-field="o.diameter_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Neck Size (Spec - mm):</strong></td>
+                                    <td><span t-field="o.neck_size_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weight / Piece (Spec - g):</strong></td>
+                                    <td><span t-field="o.weight_piece_jar_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No Cracks:</strong></td>
+                                    <td><span t-field="o.no_cracks"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No White Shading:</strong></td>
+                                    <td><span t-field="o.no_white_shading"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Neck Straight:</strong></td>
+                                    <td><span t-field="o.neck_straight"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.jar_ok"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- LABEL Specifications -->
+                        <t t-if="o.product_type == 'label'">
+                            <h4 class="mt-4">LABEL Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Label Type:</strong></td>
+                                    <td width="50%"><span t-field="o.label_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Width (Spec - mm):</strong></td>
+                                    <td><span t-field="o.width_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_label_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Printing:</strong></td>
+                                    <td><span t-field="o.printing"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Colour:</strong></td>
+                                    <td><span t-field="o.colour"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cutting:</strong></td>
+                                    <td><span t-field="o.cutting"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Gumming:</strong></td>
+                                    <td><span t-field="o.gumming_label"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ingredients:</strong></td>
+                                    <td><span t-field="o.ingredients"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Barcode No.:</strong></td>
+                                    <td><span t-field="o.barcode_no"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.label_ok"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- POUCH/ROLL Specifications -->
+                        <t t-if="o.product_type == 'pouch_roll'">
+                            <h4 class="mt-4">POUCH / ROLL Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Type:</strong></td>
+                                    <td width="50%"><span t-field="o.pouch_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Width (Spec - mm):</strong></td>
+                                    <td><span t-field="o.width_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bottom Gusset (Spec - mm):</strong></td>
+                                    <td><span t-field="o.bottom_gusset_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nos / Kg (Spec):</strong></td>
+                                    <td><span t-field="o.nos_kg_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weight / Piece (Spec - g):</strong></td>
+                                    <td><span t-field="o.weight_piece_pouch_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No Delamination:</strong></td>
+                                    <td><span t-field="o.no_delamination"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.pouch_ok"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- CARTON Specifications -->
+                        <t t-if="o.product_type == 'carton'">
+                            <h4 class="mt-4">CARTON / COTTON BOX Specifications</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td width="50%"><strong>Box Type:</strong></td>
+                                    <td width="50%"><span t-field="o.box_type"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Length (Spec - mm):</strong></td>
+                                    <td><span t-field="o.length_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Width (Spec - mm):</strong></td>
+                                    <td><span t-field="o.width_carton_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Height (Spec - mm):</strong></td>
+                                    <td><span t-field="o.height_carton_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ply (Spec):</strong></td>
+                                    <td><span t-field="o.ply_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Capacity (Spec - Nos):</strong></td>
+                                    <td><span t-field="o.capacity_spec"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Printing:</strong></td>
+                                    <td><span t-field="o.printing_carton"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OK:</strong></td>
+                                    <td><span t-field="o.carton_ok"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- Quality Result -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h4>Quality Result</h4>
+                                <p><strong>Status:</strong> <span t-field="o.quality_state"/></p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

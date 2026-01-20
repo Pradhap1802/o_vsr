@@ -76,8 +76,7 @@ class stock_picking(models.Model):
         
         
       
-    ],
-    force_store='1',)
+    ],)
 
     dispatch_stage = fields.Selection(
         selection=[

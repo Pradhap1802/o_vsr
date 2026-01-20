@@ -8,4 +8,5 @@ class MrpBom(models.Model):
         ('salted_brine', 'Salted/Brine'),
         ('semi_finished', 'Semi Finished'),
         ('finished', 'Finished'),
+        ('packing','Packing'),
     ], string='BOM Category', help='Category for grouping Bills of Materials')

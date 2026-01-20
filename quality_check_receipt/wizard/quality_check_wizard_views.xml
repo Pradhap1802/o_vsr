@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Quality Check Wizard Form View -->
+    <record id="view_quality_check_wizard_form" model="ir.ui.view">
+        <field name="name">quality.check.wizard.form</field>
+        <field name="model">quality.check.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Quality Check">
+                <group>
+                    <field name="picking_id" invisible="1"/>
+                    <field name="available_product_ids" invisible="1"/>
+                    <field name="product_id" required="1"/>
+                    <field name="team_id" required="1"/>
+                    <field name="product_type" invisible="1"/>
+                    <field name="test_type_id" required="1"/>
+                </group>
+
+                <notebook>
+
+                    <!-- WAD Specifications Tab -->
+                    <page string="Specifications">
+                        <!-- WAD Fields -->
+                        <group string="WAD - Specification" invisible="product_type != 'wad'">
+                            <group>
+                                <field name="wad_type" placeholder="e.g., 5 kg"/>
+                                <field name="thickness_spec"/>
+                                <field name="size_dia_spec"/>
+                                <field name="weight_piece_spec"/>
+                            </group>
+                            <group>
+                                <field name="nos_kg_spec"/>
+                                <field name="gumming"/>
+                                <field name="damage_free"/>
+                                <field name="wad_ok"/>
+                            </group>
+                            <field name="wad_remarks" placeholder="Enter remarks..."/>
+                        </group>
+
+                        <!-- JAR Fields -->
+                        <group string="JAR - Specification &amp; Condition Check" invisible="product_type != 'jar'">
+                            <group>
+                                <field name="jar_capacity" placeholder="e.g., 5 kg"/>
+                                <field name="height_spec"/>
+                                <field name="diameter_spec"/>
+                                <field name="neck_size_spec"/>
+                                <field name="weight_piece_jar_spec"/>
+                            </group>
+                            <group>
+                                <field name="no_cracks"/>
+                                <field name="no_white_shading"/>
+                                <field name="neck_straight"/>
+                                <field name="jar_ok"/>
+                            </group>
+                            <field name="jar_remarks" placeholder="Enter remarks..."/>
+                        </group>
+
+                        <!-- LABEL Fields -->
+                        <group string="LABEL - Specification &amp; Condition Check" invisible="product_type != 'label'">
+                            <group>
+                                <field name="label_type" placeholder="e.g., 5 kg"/>
+                                <field name="width_spec"/>
+                                <field name="height_label_spec"/>
+                                <field name="printing"/>
+                                <field name="colour"/>
+                            </group>
+                            <group>
+                                <field name="cutting"/>
+                                <field name="gumming_label"/>
+                                <field name="ingredients"/>
+                                <field name="barcode_no"/>
+                                <field name="label_ok"/>
+                            </group>
+                            <field name="label_remarks" placeholder="Enter remarks..."/>
+                        </group>
+
+                        <!-- POUCH/ROLL Fields -->
+                        <group string="POUCH / ROLL - Specification &amp; Condition Check" invisible="product_type != 'pouch_roll'">
+                            <group>
+                                <field name="pouch_type"/>
+                                <field name="width_pouch_spec"/>
+                                <field name="height_pouch_spec"/>
+                                <field name="bottom_gusset_spec"/>
+                            </group>
+                            <group>
+                                <field name="nos_kg_pouch_spec"/>
+                                <field name="weight_piece_pouch_spec"/>
+                                <field name="no_delamination"/>
+                                <field name="pouch_ok"/>
+                            </group>
+                            <field name="pouch_remarks" placeholder="Enter remarks..."/>
+                        </group>
+
+                        <!-- CARTON/COTTON BOX Fields -->
+                        <group string="CARTON / COTTON BOX - Specification &amp; Condition Check" invisible="product_type != 'carton'">
+                            <group>
+                                <field name="box_type" placeholder="e.g., 5 kg"/>
+                                <field name="length_spec"/>
+                                <field name="width_carton_spec"/>
+                                <field name="height_carton_spec"/>
+                            </group>
+                            <group>
+                                <field name="ply_spec"/>
+                                <field name="capacity_spec"/>
+                                <field name="printing_carton"/>
+                                <field name="carton_ok"/>
+                            </group>
+                            <field name="carton_remarks" placeholder="Enter remarks..."/>
+                        </group>
+                    </page>
+                </notebook>
+
+                <footer>
+                    <button string="Pass" name="action_pass" type="object" class="btn-success"/>
+                    <button string="Fail" name="action_fail" type="object" class="btn-danger"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open wizard -->
+    <record id="action_quality_check_wizard" model="ir.actions.act_window">
+        <field name="name">Quality Check</field>
+        <field name="res_model">quality.check.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

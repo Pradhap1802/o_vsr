@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_cold_storage" model="ir.actions.report">
+        <field name="name">Cold Storage Statement</field>
+        <field name="model">cold.storage</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">vsr_changes.report_cold_storage_document</field>
+        <field name="report_file">vsr_changes.report_cold_storage_document</field>
+        <field name="binding_model_id" ref="model_cold_storage"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Report Template -->
+    <template id="report_cold_storage_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center mb-4">VSR Stock Rent</h2>
+                        
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <strong>Customer:</strong> <span t-field="doc.display_name"/>
+                            </div>
+                            <div class="col-6 text-end">
+                                <strong>Date:</strong> <span t-field="doc.date"/>
+                            </div>
+                        </div>
+
+                        <!-- Stock Rent Table -->
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th class="text-center" style="width: 5%">S.no</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-center">Card no</th>
+                                    <th class="text-center">Variety</th>
+                                    <th class="text-center">Bags</th>
+                                    <th class="text-center">Weight</th>
+                                    <th class="text-center">Per Kg</th>
+                                    <th class="text-center">Monthx2</th>
+                                    <th class="text-center">Yearly</th>
+                                    <th class="text-center">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="row_idx" t-value="1"/>
+                                <tr t-foreach="doc.stock_line_ids" t-as="line">
+                                    <td class="text-center"><span t-esc="row_idx"/></td>
+                                    <td class="text-center"><span t-field="line.date"/></td>
+                                    <td class="text-center"><span t-field="line.card_no"/></td>
+                                    <td class="text-center"><span t-field="line.product_id.name"/></td>
+                                    <td class="text-center"><span t-field="line.bags"/></td>
+                                    <td class="text-center"><span t-field="line.weight"/></td>
+                                    <td class="text-center"><span t-field="line.price_per_kg"/></td>
+                                    <td class="text-center"><span t-field="line.month_multiplier"/></td>
+                                    <td class="text-center"><span t-field="line.yearly_amount"/></td>
+                                    <td class="text-end"><span t-field="line.amount"/></td>
+                                    <t t-set="row_idx" t-value="row_idx + 1"/>
+                                </tr>
+                                <!-- Empty rows to fill space if needed, similar to excel -->
+                                <tr class="fw-bold">
+                                    <td colspan="8" class="text-end">Total Amount</td>
+                                    <td></td>
+                                    <td class="text-end"><span t-field="doc.total_rent_amount"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br/>
+                        <div class="row">
+                            <div class="col-6 offset-6">
+                                <!-- Payment Table -->
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-light">
+                                            <th class="text-center" style="width: 10%">S.No</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Payment Release Of Bank Account</th>
+                                            <th class="text-center">Amount Of Paid</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="pay_idx" t-value="1"/>
+                                        <tr t-foreach="doc.payment_line_ids" t-as="pay">
+                                            <td class="text-center"><span t-esc="pay_idx"/></td>
+                                            <td class="text-center"><span t-field="pay.date"/></td>
+                                            <td class="text-center"><span t-field="pay.bank_name"/></td>
+                                            <td class="text-end"><span t-field="pay.amount_paid"/></td>
+                                            <t t-set="pay_idx" t-value="pay_idx + 1"/>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table class="table table-bordered table-sm mt-2">
+                                    <tr>
+                                        <td class="text-end fw-bold" style="width: 70%">Total Amount Paid</td>
+                                        <td class="text-end"><span t-field="doc.total_paid_amount"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-end fw-bold">Balance Amount</td>
+                                        <td class="text-end"><span t-field="doc.balance_amount"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

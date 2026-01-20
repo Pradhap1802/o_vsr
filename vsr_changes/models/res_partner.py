@@ -10,11 +10,6 @@ class ResPartner(models.Model):
     ], string='Partner Type',
        help='Select whether this partner is a Vendor or Customer')
 
-    division = fields.Char(
-        string='Division',
-        help='Division or region for grouping (e.g., AP ANANTHAPURM DIVISION)'
-    )
-
     @api.onchange('partner_type')
     def _onchange_partner_type(self):
         """Update supplier_rank and customer_rank based on partner_type"""

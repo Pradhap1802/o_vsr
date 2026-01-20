@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- FORM VIEW -->
+    <record id="view_sanitization_checklist_form" model="ir.ui.view">
+        <field name="name">sanitization.checklist.form</field>
+        <field name="model">sanitization.checklist</field>
+        <field name="arch" type="xml">
+            <form string="Sanitization Checklist">
+                <header>
+                    <button name="%(action_report_sanitization_checklist)d" string="Print Report" type="action" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title text-center">
+                        <h2>DAILY SANITIZATION &amp; CLEANLINESS CHECKLIST</h2>
+                        <h4>Pickle Food Manufacturing Plant</h4>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="shift"/>
+                            <field name="area"/>
+                        </group>
+                        <group>
+                            <field name="checklist_type" invisible="1"/>
+                            <field name="checked_by"/>
+                            <field name="approved_by"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Checklist">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="area_equipment"/>
+                                    <field name="sanitization_requirement"/>
+                                    <field name="status"/>
+                                    <field name="corrective_action"/>
+                                    <field name="remarks"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    
+                    <group>
+                        <group>
+                            <field name="overall_status" widget="radio" options="{'horizontal': true}"/>
+                        </group>
+                    </group>
+                    <group col="4">
+                        <field name="supervisor_signature"/>
+                        <field name="supervisor_date"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- TREE VIEW -->
+    <record id="view_sanitization_checklist_tree" model="ir.ui.view">
+        <field name="name">sanitization.checklist.list</field>
+        <field name="model">sanitization.checklist</field>
+        <field name="arch" type="xml">
+            <list string="Sanitization Checklists">
+                <field name="date"/>
+                <field name="shift"/>
+                <field name="area"/>
+                <field name="checklist_type"/>
+                <field name="checked_by"/>
+                <field name="overall_status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_sanitization_checklist_search" model="ir.ui.view">
+        <field name="name">sanitization.checklist.search</field>
+        <field name="model">sanitization.checklist</field>
+        <field name="arch" type="xml">
+            <search string="Search Sanitization Checklist">
+                <field name="date"/>
+                <field name="shift"/>
+                <field name="area"/>
+                <field name="checked_by"/>
+                <filter string="Today" name="today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Date" name="group_date" context="{'group_by': 'date'}"/>
+                    <filter string="Shift" name="group_shift" context="{'group_by': 'shift'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'overall_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTIONS -->
+    <record id="action_sanitization_checklist_production" model="ir.actions.act_window">
+        <field name="name">Sanitization Checklist (Production)</field>
+        <field name="res_model">sanitization.checklist</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('checklist_type', '=', 'production')]</field>
+        <field name="context">{'default_checklist_type': 'production'}</field>
+    </record>
+
+    <record id="action_sanitization_checklist_packing" model="ir.actions.act_window">
+        <field name="name">Sanitization Checklist (Packing)</field>
+        <field name="res_model">sanitization.checklist</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('checklist_type', '=', 'packing')]</field>
+        <field name="context">{'default_checklist_type': 'packing'}</field>
+    </record>
+
+    <record id="action_sanitization_checklist_barrel" model="ir.actions.act_window">
+        <field name="name">Sanitization Checklist (Barrel)</field>
+        <field name="res_model">sanitization.checklist</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('checklist_type', '=', 'barrel')]</field>
+        <field name="context">{'default_checklist_type': 'barrel'}</field>
+    </record>
+
+    <!-- MENUS -->
+    <menuitem id="menu_sanitization_report_root" 
+              name="Sanitization Checklist" 
+              parent="quality_control.menu_quality_root" 
+              sequence="10"/>
+
+    <menuitem id="menu_sanitization_production" 
+              name="Production" 
+              parent="menu_sanitization_report_root" 
+              action="action_sanitization_checklist_production" 
+              sequence="1"/>
+
+    <menuitem id="menu_sanitization_packing" 
+              name="Packing" 
+              parent="menu_sanitization_report_root" 
+              action="action_sanitization_checklist_packing" 
+              sequence="2"/>
+              
+    <menuitem id="menu_sanitization_barrel" 
+              name="Barrel" 
+              parent="menu_sanitization_report_root" 
+              action="action_sanitization_checklist_barrel" 
+              sequence="3"/>
+
+</odoo>

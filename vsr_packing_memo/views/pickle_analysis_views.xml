@@ -54,17 +54,7 @@
                             </group>
                         </group>
                         
-                        <group string="Quality Attributes">
-                            <group>
-                                <field name="taste"/>
-                                <field name="texture"/>
-                                <field name="color"/>
-                            </group>
-                            <group>
-                                <field name="smell"/>
-                                <field name="overall_acceptability"/>
-                            </group>
-                        </group>
+                        <!-- Quality Attributes Section Removed -->
                         
                         <notebook>
                             <page string="Analysis Lines">
@@ -74,6 +64,7 @@
                                             <group string="Product Information">
                                                 <field name="sequence" invisible="1"/>
                                                 <field name="product_id"/>
+                                                <field name="lot_no"/>
                                                 <field name="batch_size"/>
                                             </group>
                                         </group>
@@ -97,7 +88,8 @@
                                             
                                             <group string="Recommendations">
                                                 <field name="recommended_qty_salt"/>
-                                                <field name="recommended_qty_aa_ca"/>
+                                                <field name="recommended_qty_aa"/>
+                                                <field name="recommended_qty_ca"/>
                                             </group>
                                         </group>
                                         
@@ -109,6 +101,7 @@
                                     <list editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_id"/>
+                                        <field name="lot_no"/>
                                         <field name="batch_size"/>
                                         
                                         <!-- AgNO3 Titration -->
@@ -124,8 +117,10 @@
                                         <field name="naoh_percent_acidity"/>
                                         
                                         <!-- Recommendations -->
+                                        <!-- Recommendations -->
                                         <field name="recommended_qty_salt"/>
-                                        <field name="recommended_qty_aa_ca"/>
+                                        <field name="recommended_qty_aa"/>
+                                        <field name="recommended_qty_ca"/>
                                         <field name="remarks"/>
                                     </list>
                                 </field>
@@ -148,6 +143,23 @@
             </field>
         </record>
 
+        <!-- Custom Paper Format -->
+        <record id="paperformat_pickle_analysis" model="report.paperformat">
+            <field name="name">Pickle Analysis A4</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
         <!-- Report Action -->
         <record id="action_report_pickle_analysis" model="ir.actions.report">
             <field name="name">Pickle Analysis Report</field>
@@ -158,13 +170,14 @@
             <field name="print_report_name">'Pickle Analysis - %s' % object.name</field>
             <field name="binding_model_id" ref="model_pickle_analysis"/>
             <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="paperformat_pickle_analysis"/>
         </record>
 
         <!-- Report Template -->
         <template id="report_pickle_analysis_document">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <div class="page" style="font-family: Arial, sans-serif; font-size: 10px; padding: 20px;">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 10px;">
                         
                         <!-- Header with Border -->
                         <div style="border: 2px solid black; padding: 10px; margin-bottom: 15px;">
@@ -190,47 +203,21 @@
                                 </tr>
                             </table>
 
-                            <!-- Quality Attributes Section -->
-                            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                                <thead>
-                                    <tr style="background-color: #e8e8e8;">
-                                        <th colspan="5" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 10px; font-weight: bold;">Quality Attributes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="width: 20%; padding: 3px; border: 1px solid black; font-weight: bold;">Taste:</td>
-                                        <td style="width: 30%; padding: 3px; border: 1px solid black;"><span t-field="o.taste"/></td>
-                                        <td style="width: 20%; padding: 3px; border: 1px solid black; font-weight: bold;">Texture:</td>
-                                        <td style="width: 30%; padding: 3px; border: 1px solid black;"><span t-field="o.texture"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Colour:</td>
-                                        <td style="padding: 3px; border: 1px solid black;"><span t-field="o.color"/></td>
-                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Smell/Odour:</td>
-                                        <td style="padding: 3px; border: 1px solid black;"><span t-field="o.smell"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px solid black; font-weight: bold;">Overall Quality:</td>
-                                        <td colspan="3" style="padding: 3px; border: 1px solid black;">
-                                            <span t-if="o.overall_acceptability == 'pass'" style="color: green; font-weight: bold;">✓ Pass</span>
-                                            <span t-if="o.overall_acceptability == 'fail'" style="color: red; font-weight: bold;">✗ Fail</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <!-- Quality Attributes Section Removed -->
 
                             <!-- Main Analysis Table -->
                             <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                                 <thead>
                                     <tr style="background-color: #f0f0f0;">
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Name of The Product</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Lot No</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Batch Size</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Final</th>
                                         <th colspan="4" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">AgNO3 Titration Volume in ml</th>
                                         <th colspan="4" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">NaOH Titration Volume in ml</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of salt</th>
-                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of AA/CA</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of AA</th>
+                                        <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Recommended Qty of CA</th>
                                         <th rowspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px; font-weight: bold;">Remarks</th>
                                     </tr>
                                     <tr style="background-color: #f0f0f0;">
@@ -251,6 +238,7 @@
                                     <t t-foreach="o.line_ids" t-as="line">
                                         <tr>
                                             <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.product_id.name"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.lot_no"/></td>
                                             <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.batch_size if line.batch_size else ''"/></td>
                                             <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.1f' % line.final_batch if line.final_batch else ''"/></td>
                                             
@@ -268,7 +256,8 @@
                                             
                                             <!-- Recommendations -->
                                             <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_salt if line.recommended_qty_salt else ''"/></td>
-                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_aa_ca if line.recommended_qty_aa_ca else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_aa if line.recommended_qty_aa else ''"/></td>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: center; font-size: 9px;"><span t-esc="'%.2f' % line.recommended_qty_ca if line.recommended_qty_ca else ''"/></td>
                                             <td style="border: 1px solid black; padding: 4px; text-align: left; font-size: 9px;"><span t-field="line.remarks"/></td>
                                         </tr>
                                     </t>
@@ -295,5 +284,43 @@
                   parent="quality_control.menu_quality_root" 
                   action="action_pickle_analysis" 
                   sequence="100"/>
+        <!-- Pivot View -->
+        <record id="view_pickle_analysis_pivot" model="ir.ui.view">
+            <field name="name">pickle.analysis.pivot</field>
+            <field name="model">pickle.analysis</field>
+            <field name="arch" type="xml">
+                <pivot string="Pickle Analysis">
+                    <field name="date" type="row" interval="month"/>
+                    <field name="factor_acidity" type="measure"/>
+                    <field name="salt_factor" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_pickle_analysis_graph" model="ir.ui.view">
+            <field name="name">pickle.analysis.graph</field>
+            <field name="model">pickle.analysis</field>
+            <field name="arch" type="xml">
+                <graph string="Pickle Analysis">
+                    <field name="date"/>
+                    <field name="factor_acidity" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Reporting Action -->
+        <record id="action_pickle_analysis_reporting" model="ir.actions.act_window">
+            <field name="name">Pickle Analysis</field>
+            <field name="res_model">pickle.analysis</field>
+            <field name="view_mode">pivot,graph</field>
+        </record>
+
+        <!-- Reporting Menu -->
+        <menuitem id="menu_pickle_analysis_reporting"
+                  name="Pickle Analysis"
+                  parent="quality_control.menu_quality_reporting"
+                  action="action_pickle_analysis_reporting"
+                  sequence="20"/>
     </data>
 </odoo>

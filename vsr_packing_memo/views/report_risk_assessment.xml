@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_report_risk_assessment" model="ir.actions.report">
+            <field name="name">Risk Assessment</field>
+            <field name="model">risk.assessment</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">vsr_packing_memo.report_risk_assessment_document</field>
+            <field name="report_file">vsr_packing_memo.report_risk_assessment_document</field>
+            <field name="print_report_name">'Risk Assessment - %s' % object.name</field>
+            <field name="binding_model_id" ref="model_risk_assessment"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_risk_assessment_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 11px;">
+                        
+                        <!-- Title -->
+                        <div style="text-align: center; margin-bottom: 10px;">
+                            <h3 style="font-weight: bold; margin: 0;">CONSTRUCTION RISK ASSESSMENTS</h3>
+                        </div>
+
+                        <!-- Header Table -->
+                        <table style="width: 100%; border-collapse: collapse; border: 2px solid black;">
+                            <tr>
+                                <td style="width: 15%; background-color: #dbeecf; padding: 5px; border: 1px solid black; font-weight: bold;">Project Title:</td>
+                                <td style="width: 55%; padding: 5px; border: 1px solid black;"><span t-field="o.project_title"/></td>
+                                <td style="width: 15%; background-color: #dbeecf; padding: 5px; border: 1px solid black; font-weight: bold;">Risk Assess. No.:</td>
+                                <td style="width: 15%; padding: 5px; border: 1px solid black; font-weight: bold; font-size: 16px; text-align: center;"><span t-field="o.name"/></td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #dbeecf; padding: 5px; border: 1px solid black; font-weight: bold;">Task/Activity:</td>
+                                <td style="padding: 5px; border: 1px solid black;"><span t-field="o.task_activity"/></td>
+                                <td style="background-color: #dbeecf; padding: 5px; border: 1px solid black; font-weight: bold;">Project No.:</td>
+                                <td style="padding: 5px; border: 1px solid black;"><span t-field="o.project_no"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border: 1px solid black;"></td>
+                                <td style="background-color: #dbeecf; padding: 5px; border: 1px solid black; font-weight: bold;">Date Prepared:</td>
+                                <td style="padding: 5px; border: 1px solid black;"><span t-field="o.date_prepared"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Hazards Table Structure -->
+                        <table style="width: 100%; border-collapse: collapse; border: 2px solid black; margin-top: 0px;">
+                            <!-- Header Row 1 -->
+                            <tr style="background-color: #808080; color: white;">
+                                <td colspan="2" style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold;">HAZARDS</td>
+                                <td colspan="3" style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold;">Likelihood</td>
+                                <td colspan="5" style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold;">Severity</td>
+                                <td style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold;">Risk Score</td>
+                            </tr>
+                            <!-- Header Row 2 -->
+                            <tr style="background-color: #dbeecf;">
+                                <td style="width: 5%; border: 1px solid black; padding: 5px; font-weight: bold;">Ref.</td>
+                                <td style="width: 45%; border: 1px solid black; padding: 5px; font-weight: bold;">Key hazards associated with the above task/activity.</td>
+                                
+                                <!-- Likelihood Headers -->
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Probable</div></td>
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Occasional</div></td>
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Remote</div></td>
+
+                                <!-- Severity Headers -->
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Catastrophic</div></td>
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Critical</div></td>
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Serious</div></td>
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Marginal</div></td>
+                                <td style="border: 1px solid black; padding: 2px; text-align: center; font-size: 9px;"><div style="transform: rotate(-90deg); white-space: nowrap;">Negligible</div></td>
+
+                                <!-- Risk Score Formula -->
+                                <td style="border: 1px solid black; padding: 5px; text-align: center; font-size: 9px;">Likelihood x Severity</td>
+                            </tr>
+                            <!-- Header Row 3 Scores -->
+                            <tr style="background-color: #dbeecf;">
+                                <td colspan="2" style="border: 1px solid black; text-align: right; padding-right: 5px;">Score:</td>
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">3</td>
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">2</td>
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">1</td>
+                                
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">5</td>
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">4</td>
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">3</td>
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">2</td>
+                                <td style="border: 1px solid black; text-align: center; font-weight: bold;">1</td>
+                                
+                                <td style="border: 1px solid black;"></td>
+                            </tr>
+
+                            <!-- Data Rows -->
+                            <t t-foreach="o.hazard_ids" t-as="line">
+                                <tr>
+                                    <td style="border: 1px solid black; padding: 5px;"><span t-field="line.ref"/></td>
+                                    <td style="border: 1px solid black; padding: 5px;"><span t-field="line.hazard_description"/></td>
+                                    
+                                    <!-- Likelihood Checks -->
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.likelihood == '3'">X</span></td>
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.likelihood == '2'">X</span></td>
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.likelihood == '1'">X</span></td>
+                                    
+                                    <!-- Severity Checks -->
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.severity == '5'">X</span></td>
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.severity == '4'">X</span></td>
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.severity == '3'">X</span></td>
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.severity == '2'">X</span></td>
+                                    <td style="border: 1px solid black; text-align: center;"><span t-if="line.severity == '1'">X</span></td>
+                                    
+                                    <!-- Risk Score -->
+                                    <td style="border: 1px solid black; text-align: center; font-weight: bold;"><span t-field="line.risk_score"/></td>
+                                </tr>
+                            </t>
+                            
+                            <!-- Empty Rows filler if needed (optional, skipping for now) -->
+                        </table>
+
+                        <!-- Risk Assessment Scores Legend -->
+                        <table style="width: 100%; border-collapse: collapse; border: 2px solid black; border-top: none;">
+                            <tr>
+                                <td style="width: 20%; padding: 5px; border: 1px solid black; font-weight: bold;">Risk Assessment Scores:</td>
+                                <td style="width: 26%; background-color: red; padding: 5px; border: 1px solid black; text-align: center; font-weight: bold;">10+ Very High Risk</td>
+                                <td style="width: 27%; background-color: orange; padding: 5px; border: 1px solid black; text-align: center; font-weight: bold;">5-9 High Risk</td>
+                                <td style="width: 27%; background-color: #ffff99; padding: 5px; border: 1px solid black; text-align: center; font-weight: bold;">1-4 Low Risk</td>
+                            </tr>
+                        </table>
+
+                        <br/>
+
+                        <!-- Persons Affected & PPE -->
+                        <div style="display: flex;">
+                            <!-- Persons Affected -->
+                            <div style="width: 48%; margin-right: 2%;">
+                                <table style="width: 100%; border-collapse: collapse; border: 2px solid black;">
+                                    <tr style="background-color: #808080; color: white;">
+                                        <td colspan="4" style="text-align: center; padding: 5px; font-weight: bold; border: 1px solid black;">PERSONS AFFECTED</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 40%; border: 1px solid black; padding: 3px; font-weight: bold;">Operatives</td>
+                                        <td style="width: 10%; border: 1px solid black; text-align: center;"><span t-if="o.person_operative">X</span></td>
+                                        <td style="width: 40%; border: 1px solid black; padding: 3px; font-weight: bold;">Members of Public</td>
+                                        <td style="width: 10%; border: 1px solid black; text-align: center;"><span t-if="o.person_public">X</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Other Workers</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.person_other_worker">X</span></td>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Managers</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.person_manager">X</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Site Visitors</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.person_visitor">X</span></td>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Young Persons</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.person_young">X</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Others</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.person_other">X</span></td>
+                                        <td colspan="2" style="border: 1px solid black;"></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- PPE Requirements -->
+                            <div style="width: 50%;">
+                                <table style="width: 100%; border-collapse: collapse; border: 2px solid black;">
+                                    <tr style="background-color: #808080; color: white;">
+                                        <td colspan="4" style="text-align: center; padding: 5px; font-weight: bold; border: 1px solid black;">PPE REQUIREMENTS</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 40%; border: 1px solid black; padding: 3px; font-weight: bold;">Harness &amp; Lanyard</td>
+                                        <td style="width: 10%; border: 1px solid black; text-align: center;"><span t-if="o.ppe_harness">X</span></td>
+                                        <td style="width: 40%; border: 1px solid black; padding: 3px; font-weight: bold;">Hi-Viz Clothing</td>
+                                        <td style="width: 10%; border: 1px solid black; text-align: center;"><span t-if="o.ppe_hiviz">X</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Hearing Protection</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.ppe_hearing">X</span></td>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Eye Protection</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.ppe_eye">X</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Gloves</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.ppe_gloves">X</span></td>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Boots</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.ppe_boots">X</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Respiratory Protection</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.ppe_respiratory">X</span></td>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Head Protection</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.ppe_head">X</span></td>
+                                    </tr>
+                                     <tr>
+                                        <td style="border: 1px solid black; padding: 3px; font-weight: bold;">Approved Overalls</td>
+                                        <td style="border: 1px solid black; text-align: center;"><span t-if="o.ppe_overalls">X</span></td>
+                                        <td colspan="2" style="border: 1px solid black;"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

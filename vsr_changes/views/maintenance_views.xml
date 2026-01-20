@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_equipment_request_view_form_inherit_spare_parts" model="ir.ui.view">
+        <field name="name">maintenance.request.form.inherit.spare.parts</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='maintenance_type']" position="after">
+                <field name="calibration"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="Spare Parts Used">
+                        <field name="spare_part_ids">
+                            <list editable="bottom">
+                                <field name="date_used"/>
+                                <field name="allowed_product_ids" column_invisible="1"/>
+                                <field name="product_id" options="{'no_create': True}"/> 
+                                <field name="quantity"/>
+                                <field name="uom_id"/>
+                                <field name="remarks"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_equipment_view_form_inherit_spare_parts" model="ir.ui.view">
+        <field name="name">maintenance.equipment.form.inherit.spare.parts</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Spare Parts">
+                    <field name="spare_part_product_ids" widget="many2many_tags" placeholder="Select Allowed Spare Parts..."/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

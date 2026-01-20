@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!-- Custom Paper Format for Production Memo (Landscape) -->
+        <record id="paperformat_production_memo_landscape_pm" model="report.paperformat">
+            <field name="name">Production Memo Landscape (PM)</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
         <!-- Report Action for Production Memo -->
         <record id="action_report_production_memo" model="ir.actions.report">
             <field name="name">Production Memo</field>
@@ -11,166 +28,243 @@
             <field name="print_report_name">'Production Memo - %s' % object.name</field>
             <field name="binding_model_id" ref="mrp.model_mrp_production"/>
             <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="paperformat_production_memo_landscape_pm"/>
         </record>
 
         <!-- Report Template for Production Memo -->
         <template id="report_production_memo_document">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <div class="page" style="font-family: Arial, sans-serif; font-size: 12px;">
-                        
-                        <!-- Header Section -->
-                        <div style="margin-bottom: 20px;">
-                            <table style="width: 100%; border: none;">
-                                <tr>
-                                    <td style="width: 60%; vertical-align: top; border: none;">
-                                        <table style="width: 100%; border: none; font-size: 11px;">
-                                            <tr>
-                                                <td style="width: 35%; border: none; padding: 2px 0;"><strong>PRODUCT NAME</strong></td>
-                                                <td style="border: none; padding: 2px 0;">: <strong><span t-field="o.product_id.name"/></strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: none; padding: 2px 0;">TIME STARTED</td>
-                                                <td style="border: none; padding: 2px 0;">: _________________</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: none; padding: 2px 0;">TIME END</td>
-                                                <td style="border: none; padding: 2px 0;">: _________________</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: none; padding: 2px 0;">MEMO NO</td>
-                                                <td style="border: none; padding: 2px 0;">: <strong><span t-field="o.memo_no"/></strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: none; padding: 2px 0;">DATE</td>
-                                                <td style="border: none; padding: 2px 0;">: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%b-%y')"/></td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                    <td style="width: 40%; text-align: right; vertical-align: top; border: none;">
-                                        <div style="text-align: center;">
-                                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 60px; max-width: 150px; margin-bottom: 5px;" alt="Company Logo"/>
-                                            <h4 style="margin: 5px 0; font-weight: bold; font-size: 14px;">V.S.R AGRO PRODUCTS</h4>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                    <!-- Calculate Pages: chunk lots by 30 (3 tables of 10) -->
+                    <t t-set="total_lots" t-value="o.no_of_lots if o.no_of_lots > 0 else 1"/>
+                    <t t-set="page_starts" t-value="range(0, total_lots, 30)"/>
 
-                        <!-- Main Table -->
-                        <style>
-                            .packing-table {
-                                width: 100%;
-                                border-collapse: collapse;
-                                margin-top: 10px;
-                                font-size: 11px;
-                            }
-                            .packing-table th, .packing-table td {
-                                border: 2px solid #000;
-                                padding: 6px 4px;
-                                text-align: center;
-                                vertical-align: middle;
-                            }
-                            .packing-table th {
-                                background-color: #e8e8e8;
-                                font-weight: bold;
-                                font-size: 10px;
-                            }
-                            .packing-table td.text-left {
-                                text-align: left;
-                                padding-left: 8px;
-                            }
-                            .packing-table td.text-right {
-                                text-align: right;
-                                padding-right: 8px;
-                            }
-                            .packing-table tr.total-row {
-                                font-weight: bold;
-                                background-color: #f0f0f0;
-                            }
-                        </style>
-
-                        <t t-set="lot_count" t-value="o.no_of_lots if o.no_of_lots > 0 else 1"/>
-                        
-                        <table class="packing-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 50px;">Sl.No</th>
-                                    <th class="text-left">Ingrideants In Kg</th>
-                                    <!-- Dynamic Lot Columns -->
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <th>Lot <span t-esc="'%02d' % i"/></th>
-                                    </t>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Ingredients Rows -->
-                                <t t-set="total_per_lot_sum" t-value="0"/>
-                                <t t-set="grand_total_sum" t-value="0"/>
-                                
-                                <tr t-foreach="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')" t-as="move">
-                                    <td><span t-esc="move_index + 1"/></td>
-                                    <td class="text-left"><span t-field="move.product_id.name"/></td>
-                                    
-                                    <!-- Calculate per lot quantity -->
-                                    <t t-set="qty_per_lot" t-value="move.product_uom_qty / lot_count"/>
-                                    <t t-set="total_per_lot_sum" t-value="total_per_lot_sum + qty_per_lot"/>
-                                    <t t-set="grand_total_sum" t-value="grand_total_sum + move.product_uom_qty"/>
-
-                                    <!-- Repeat per lot quantity for each lot column -->
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.2f' % qty_per_lot"/></td>
-                                    </t>
-                                    
-                                    <!-- Total Column -->
-                                    <td><strong><span t-esc="'%.2f' % move.product_uom_qty"/></strong></td>
-                                </tr>
-                                
-                                <!-- Total Ingredients Row -->
-                                <tr class="total-row">
-                                    <td colspan="2" class="text-right">Total Ingredients</td>
-                                    <!-- Dynamic Totals for Lot Columns -->
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.1f' % (grand_total_sum / lot_count)"/></td>
-                                    </t>
-                                    <td><span t-esc="'%.2f' % grand_total_sum"/></td>
-                                </tr>
-
-                                <!-- Calculate wastage -->
-                                <t t-set="total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
-                                <t t-set="total_qty_produced" t-value="o.product_qty"/>
-
-                                <!-- Wastage Row -->
-                                <tr>
-                                    <td colspan="2" class="text-right">Less: Wastage</td>
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.2f' % (total_wastage / lot_count) if total_wastage else '0.00'"/></td>
-                                    </t>
-                                    <td><span t-esc="'%.2f' % total_wastage"/></td>
-                                </tr>
-
-                                <!-- Net Production Row -->
-                                <tr class="total-row" style="background-color: #d1e7dd;">
-                                    <td colspan="2" class="text-right">Net Production (Output)</td>
-                                    <t t-foreach="range(1, lot_count + 1)" t-as="i">
-                                        <td><span t-esc="'%.2f' % (total_qty_produced / lot_count)"/></td>
-                                    </t>
-                                    <td><span t-esc="'%.2f' % total_qty_produced"/></td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <!-- Footer Extra Fields -->
-                        <div class="mt-4">
-                            <div class="row mt-3">
-                                <div class="col-12" style="padding: 10px 0;">
-                                    <strong>Authorised Signatory:</strong> ___________________________________
+                    <t t-foreach="page_starts" t-as="page_start_val">
+                        <div class="page" style="font-family: Calibri, Arial, sans-serif; font-size: 10px; page-break-after: always;">
+                            
+                            <!-- Header Section (Only on First Page) -->
+                            <t t-if="page_start_val == 0">
+                                <div style="margin-bottom: 5px;">
+                                    <table style="width: 100%; border: none;">
+                                        <tr>
+                                            <td style="width: 60%; vertical-align: top;">
+                                                <table style="width: 100%; font-weight: bold;">
+                                                    <tr>
+                                                        <td style="width: 100px; padding: 1px 0;">PRODUCT NAME</td>
+                                                        <td style="padding: 1px 0;">: <span t-field="o.product_id.name"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">TIME STARTED</td>
+                                                        <td style="padding: 1px 0;">: ____________________</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">TIME END</td>
+                                                        <td style="padding: 1px 0;">: ____________________</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">MEMO NO</td>
+                                                        <td style="padding: 1px 0;">: <span t-field="o.memo_no"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">DATE</td>
+                                                        <td style="padding: 1px 0;">: <span t-esc="o.date_start.strftime('%d-%b-%y') if o.date_start else ''"/></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 40%; vertical-align: top; text-align: right;">
+                                                <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                                                    <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 40px; margin-bottom: 2px;" alt="Company Logo"/>
+                                                    <div style="font-weight: bold; font-size: 12px;">V.S.R AGRO PRODUCTS</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
-                            </div>
-                        </div>
 
-                    </div>
+                                <!-- Sensory Attributes (Only on First Page, Above Tables) -->
+                                <div style="margin-bottom: 10px;">
+                                    <h6 style="font-weight: bold; margin-bottom: 2px; font-size: 15px;">SENSORY ATTRIBUTES</h6>
+                                    <table class="table table-bordered table-sm" style="width: 100%; font-size: 15px; border: 1px solid black;">
+                                        <tr>
+                                            <td style="width: 15%; font-weight: bold; padding: 1px;">Taste</td>
+                                            <td style="width: 35%; padding: 1px;"><span t-field="o.taste"/></td>
+                                            <td style="width: 15%; font-weight: bold; padding: 1px;">Texture</td>
+                                            <td style="width: 35%; padding: 1px;"><span t-field="o.texture"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold; padding: 1px;">Colour</td>
+                                            <td style="padding: 1px;"><span t-field="o.color"/></td>
+                                            <td style="font-weight: bold; padding: 1px;">Smell/Odour</td>
+                                            <td style="padding: 1px;"><span t-field="o.smell"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="padding: 1px;">
+                                                <strong>Overall Quality: </strong>
+                                                <span t-field="o.overall_acceptability" style="text-transform: uppercase; font-weight: bold; margin-left: 10px;"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </t>
+
+                            <!-- Loop for 3 Tables (0, 10, 20 offset) -->
+                            <t t-foreach="[0, 10, 20]" t-as="table_offset">
+                                <t t-set="current_table_start" t-value="page_start_val + table_offset"/>
+                                
+                                <!-- Only render table if lots exist in this range -->
+                                <t t-if="current_table_start &lt; total_lots">
+                                    <div style="margin-bottom: 10px;">
+                                        <!-- Table Logic -->
+                                        <style>
+                                            .production-table {
+                                                width: 100%;
+                                                border-collapse: collapse;
+                                                border: 1px solid black;
+                                                font-size: 15px;
+                                            }
+                                            .production-table th, .production-table td {
+                                                border: 1px solid black;
+                                                padding: 2px;
+                                                text-align: center;
+                                            }
+                                            .production-table th {
+                                                background-color: #f2f2f2;
+                                                font-weight: bold;
+                                            }
+                                            .bold-row {
+                                                font-weight: bold;
+                                            }
+                                            .net-prod-row {
+                                                background-color: #d8ead2; 
+                                                font-weight: bold;
+                                            }
+                                        </style>
+
+                                        <table class="production-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 30px;">Sl.No</th>
+                                                    <th style="text-align: left;">Ingredients In Kg</th>
+                                                    
+                                                    <!-- Determine active lots for this specific table (max 10) -->
+                                                    <t t-set="lots_in_table" t-value="total_lots - current_table_start"/>
+                                                    <t t-set="active_cols" t-value="10 if lots_in_table >= 10 else lots_in_table"/>
+                                                    
+                                                    <!-- Dynamic Header for Lots (only show actual lot columns) -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
+                                                        <t t-set="current_lot_num" t-value="current_table_start + col_idx"/>
+                                                        <th>Lot <t t-esc="'%02d' % current_lot_num"/></th>
+                                                    </t>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-set="row_counter" t-value="1"/>
+                                                
+                                                <!-- Determine active lots for this specific table (max 10) -->
+                                                <t t-set="lots_in_table" t-value="total_lots - current_table_start"/>
+                                                <t t-set="active_cols" t-value="10 if lots_in_table >= 10 else lots_in_table"/>
+                                                
+                                                <!-- Ingredients Rows -->
+                                                <t t-foreach="o.move_raw_ids.filtered(lambda m: m.state != 'cancel')" t-as="move">
+                                                    <tr>
+                                                        <td><t t-esc="row_counter"/></td>
+                                                        <td style="text-align: left;"><span t-field="move.product_id.name"/></td>
+                                                        
+                                                        <t t-set="line_grand_total" t-value="move.product_uom_qty"/>
+                                                        <t t-set="qty_per_lot" t-value="line_grand_total / total_lots"/>
+                                                        
+                                                        <!-- Only show columns for actual lots -->
+                                                        <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
+                                                            <td>
+                                                                <span t-esc="'%.2f' % qty_per_lot"/>
+                                                            </td>
+                                                        </t>
+                                                        
+                                                        <!-- Table Total (Sum of displayed lots) -->
+                                                        <td class="bold-row">
+                                                            <span t-esc="'%.2f' % (qty_per_lot * active_cols)"/>
+                                                        </td>
+                                                    </tr>
+                                                    <t t-set="row_counter" t-value="row_counter + 1"/>
+                                                </t>
+
+                                                <!-- Total Ingredients Row -->
+                                                <tr class="bold-row" style="background-color: #f2f2f2;">
+                                                    <td colspan="2" style="text-align: right;">Total Ingredients</td>
+                                                    <t t-set="grand_total_ingredients" t-value="sum(o.move_raw_ids.filtered(lambda m: m.state != 'cancel').mapped('product_uom_qty'))"/>
+                                                    <t t-set="total_per_lot" t-value="grand_total_ingredients / total_lots"/>
+                                                    
+                                                    <!-- Only show columns for actual lots -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
+                                                        <td>
+                                                            <span t-esc="'%.2f' % total_per_lot"/>
+                                                        </td>
+                                                    </t>
+                                                    <td><span t-esc="'%.2f' % (total_per_lot * active_cols)"/></td>
+                                                </tr>
+
+                                                <!-- Less: Wastage -->
+                                                <t t-set="grand_total_wastage" t-value="sum(o.scrap_ids.filtered(lambda s: s.state == 'done').mapped('scrap_qty'))"/>
+                                                <t t-set="wastage_per_lot" t-value="grand_total_wastage / total_lots"/>
+                                                
+                                                <tr>
+                                                    <td colspan="2" style="text-align: right;">Less: Wastage</td>
+                                                    <!-- Only show columns for actual lots -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
+                                                        <td>
+                                                            <span t-esc="'%.2f' % wastage_per_lot"/>
+                                                        </td>
+                                                    </t>
+                                                    <td><span t-esc="'%.2f' % (wastage_per_lot * active_cols)"/></td>
+                                                </tr>
+
+                                                <!-- Net Production (Output) -->
+                                                <t t-set="net_total_per_lot" t-value="total_per_lot - wastage_per_lot"/>
+                                                <tr class="net-prod-row">
+                                                    <td colspan="2" style="text-align: right;">Net Production (Output)</td>
+                                                    <!-- Only show columns for actual lots -->
+                                                    <t t-foreach="range(1, active_cols + 1)" t-as="col_idx">
+                                                        <td>
+                                                            <span t-esc="'%.2f' % net_total_per_lot"/>
+                                                        </td>
+                                                    </t>
+                                                    <td><span t-esc="'%.2f' % (net_total_per_lot * active_cols)"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </t>
+                            </t>
+                            
+                            <!-- Signatory Section - Only on Last Page, After Last Table -->
+                            <t t-if="page_start_val == page_starts[-1]">
+                                <div style="break-inside: avoid; margin-top: 70px;">
+                                    <!-- Signatories -->
+                                    <table style="width: 100%; border: none; font-size: 15px;">
+                                        <tr>
+                                            <td style="width: 33%; text-align: left;">
+                                                <div style="border-top: 1px solid black; width: 80%; padding-top: 5px;">
+                                                    <strong>Prepared By</strong>
+                                                </div>
+                                            </td>
+                                            <td style="width: 33%; text-align: center;">
+                                                <div style="border-top: 1px solid black; width: 80%; margin: 0 auto; padding-top: 5px;">
+                                                    <strong>Checked By</strong>
+                                                </div>
+                                            </td>
+                                            <td style="width: 33%; text-align: right;">
+                                                <div style="border-top: 1px solid black; width: 80%; margin-left: auto; padding-top: 5px; text-align: left; padding-left: 5px;">
+                                                    <strong>Authorised Signatory</strong>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </t>
+
+                        </div>
+                    </t>
                 </t>
             </t>
         </template>

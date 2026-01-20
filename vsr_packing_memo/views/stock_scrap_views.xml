@@ -8,6 +8,8 @@
             <field name="inherit_id" ref="stock.stock_scrap_form_view"/>
             <field name="arch" type="xml">
                 <field name="scrap_reason_tag_ids" position="after">
+                    <field name="production_type" invisible="1"/>
+                    <field name="lot_no" invisible="production_type != 'production_memo'"/>
                     <field name="scrap_remarks" placeholder="Enter remarks for this scrap/wastage..."/>
                 </field>
             </field>

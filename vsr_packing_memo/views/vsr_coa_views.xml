@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Sequence -->
+        <record id="seq_vsr_coa" model="ir.sequence">
+            <field name="name">COA No</field>
+            <field name="code">vsr.coa</field>
+            <field name="prefix">COA</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <!-- List View -->
+        <record id="view_vsr_coa_tree" model="ir.ui.view">
+            <field name="name">vsr.coa.tree</field>
+            <field name="model">vsr.coa</field>
+            <field name="arch" type="xml">
+                <list string="COA">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="category"/>
+                    <field name="date_processing"/>
+                    <field name="invoice_no"/>
+                    <field name="lot_no"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_vsr_coa_form" model="ir.ui.view">
+            <field name="name">vsr.coa.form</field>
+            <field name="model">vsr.coa</field>
+            <field name="arch" type="xml">
+                <form string="Certificate of Analysis">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id"/>
+                                <field name="category"/>
+                                <field name="date_processing"/>
+                                <field name="po_number"/>
+                                <field name="lot_no"/>
+                                <field name="product_description"/>
+                                <field name="dispatch_date"/>
+                                <field name="exp_date_text"/>
+                                <field name="variety_of_pickle"/>
+                            </group>
+                            <group>
+                                <field name="invoice_no"/>
+                                <field name="truck_no"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Analytical Parameters">
+                                <field name="line_ids">
+                                    <list editable="bottom">
+                                        <field name="parameter"/>
+                                        <field name="uom"/>
+                                        <field name="result"/>
+                                        <field name="standard"/>
+                                        <field name="test_method"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Comments &amp; Signatures">
+                                <group>
+                                    <field name="comment"/>
+                                </group>
+                                <group>
+                                    <group string="Approvals">
+                                        <field name="verified_by"/>
+                                        <field name="prepared_by"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_vsr_coa" model="ir.actions.act_window">
+            <field name="name">Certificate of Analysis</field>
+            <field name="res_model">vsr.coa</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_vsr_coa"
+                  name="COA"
+                  parent="quality_control.menu_quality_root"
+                  action="action_vsr_coa"
+                  sequence="120"/>
+    </data>
+</odoo>

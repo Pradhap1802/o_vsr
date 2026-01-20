@@ -3,14 +3,6 @@ from odoo import models, fields, api
 class AccountMove(models.Model):
     _inherit = 'account.move'
     
-    partner_division = fields.Char(
-        string='Division',
-        related='partner_id.division',
-        store=True,
-        readonly=True,
-        help='Division from partner for grouping invoices'
-    )
-
     vsr_vehicle_number = fields.Char(
         string='Vehicle Number', 
         compute='_compute_vsr_vehicle_number', 

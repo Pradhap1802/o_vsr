@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add district field to partner form view before state -->
+    <record id="view_partner_form_district" model="ir.ui.view">
+        <field name="name">res.partner.form.district</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Add district field before state_id field in address block -->
+            <field name="state_id" position="before">
+                <field name="district" placeholder="District" class="o_address_district"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- Add Target page to Contact form -->
+    <record id="view_partner_form_target_page" model="ir.ui.view">
+        <field name="name">res.partner.form.target.page</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Target" invisible="customer_rank == 0">
+                    <group>
+                        <group string="Period">
+                            <field name="target_start_date"/>
+                            <field name="target_end_date"/>
+                        </group>
+                        <group string="Sales Representative">
+                            <field name="sales_representative_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Target Information">
+                            <field name="target"/>
+                            <field name="target_achieved" readonly="1"/>
+                            <field name="pending_target" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Add Target fields to Contact list view (editable) -->
+    <record id="view_partner_list_target" model="ir.ui.view">
+        <field name="name">res.partner.list.target</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <!-- Make list editable -->
+            <xpath expr="//list" position="attributes">
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+            <!-- Add target fields after phone -->
+            <field name="phone" position="after">
+                <field name="target_start_date" optional="hide"/>
+                <field name="target_end_date" optional="hide"/>
+                <field name="sales_representative_id" optional="hide"/>
+                <field name="target" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Add filter in search view for district -->
+    <record id="view_res_partner_filter_district" model="ir.ui.view">
+        <field name="name">res.partner.search.district</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter string="District" name="group_district" context="{'group_by': 'district'}"/>
+                <filter string="Salesperson" name="group_salesperson" context="{'group_by': 'user_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

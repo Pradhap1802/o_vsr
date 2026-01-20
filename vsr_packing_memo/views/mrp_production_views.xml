@@ -12,7 +12,21 @@
                     <field name="production_type" widget="radio" options="{'horizontal': true}"/>
                     <field name="memo_no" readonly="1" invisible="production_type != 'production_memo'"/>
                     <field name="no_of_lots" invisible="production_type != 'production_memo'"/>
+                    <field name="qty_per_lot" invisible="production_type != 'production_memo'"/>
                 </field>
+                <xpath expr="//sheet//notebook" position="inside">
+                    <page string="Sensory Attributes" invisible="production_type != 'production_memo'">
+                        <group>
+                            <group>
+                                <field name="taste"/>
+                                <field name="texture"/>
+                                <field name="color"/>
+                                <field name="smell"/>
+                                <field name="overall_acceptability"/>
+                            </group>
+                        </group>    
+                    </page>
+                </xpath>
             </field>
         </record>
 
@@ -24,7 +38,7 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="production_type" optional="show"/>
-                    <field name="memo_no" optional="show"/>
+                    <field name="memo_no" optional="show" column_invisible="context.get('default_production_type') == 'packing_memo'"/>
                 </field>
             </field>
         </record>
