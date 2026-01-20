@@ -65,27 +65,42 @@
         <field name="arch" type="xml">
             <form string="Target Tracking">
                 <sheet>
-                    <group>
-                        <group string="Customer Information">
-                            <field name="partner_id" domain="[('customer_rank', '>', 0)]" context="{'default_customer_rank': 1, 'search_default_customer': 1}"/>
-                            <field name="state_id"/>
-                            <field name="district"/>
-                            <field name="taluka_name"/>
-                            <field name="phone"/>
-                            <field name="salesperson_id"/>
-                        </group>
-                        <group string="Target Period">
-                            <field name="date_from"/>
-                            <field name="date_to"/>
-                        </group>
-                    </group>
-                    <group>
-                        <group string="Target Details">
-                            <field name="jan_target"/>
-                            <field name="target_achieved" readonly="1"/>
-                            <field name="pending_target" readonly="1"/>
-                        </group>
-                    </group>
+                    <notebook>
+                        <!-- Customer Information Page -->
+                        <page string="Customer Information">
+                            <group>
+                                <group string="Customer Details">
+                                    <field name="partner_id" domain="[('customer_rank', '>', 0)]" context="{'default_customer_rank': 1, 'search_default_customer': 1}"/>
+                                    <field name="state_id"/>
+                                    <field name="district"/>
+                                    <field name="taluka_name"/>
+                                    <field name="phone"/>
+                                    <field name="salesperson_id"/>
+                                    <field name="super_stockiest_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Target Page -->
+                        <page string="Target">
+                            <group>
+                                <group string="Period">
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                </group>
+                                <group string="Sales Representative">
+                                    <field name="sales_representative_id"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Target Information">
+                                    <field name="jan_target"/>
+                                    <field name="target_achieved" readonly="1"/>
+                                    <field name="pending_target" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

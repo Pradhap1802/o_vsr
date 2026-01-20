@@ -11,9 +11,10 @@
         - Tracks monthly targets and achievements
     ''',
     'author': 'Processdrive',
-    'depends': ['base', 'sale'],
+    'depends': ['base', 'sale', 'hr'],
     'data': [
         'security/ir.model.access.csv',
+        'data/ir_cron_data.xml',
         'views/res_partner_views.xml',
         'views/target_tracking_views.xml',
         'views/menu_views.xml',

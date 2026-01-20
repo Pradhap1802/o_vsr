@@ -1,5 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -20,15 +22,17 @@ class TargetTracking(models.Model):
     )
     
     date_from = fields.Date(
-        string='Date From',
+        string='Start Date',
         help='Start date of the target period',
-        index=True
+        index=True,
+        default=lambda self: self._get_default_date_from()
     )
     
     date_to = fields.Date(
-        string='Date To',
+        string='End Date',
         help='End date of the target period',
-        index=True
+        index=True,
+        default=lambda self: self._get_default_date_to()
     )
     
     taluka_name = fields.Char(
@@ -49,6 +53,13 @@ class TargetTracking(models.Model):
         string='Salesperson',
         domain="[('share', '=', False)]",
         help='Salesperson responsible for this target',
+        index=True
+    )
+    
+    sales_representative_id = fields.Many2one(
+        'hr.employee',
+        string='Sales Representative',
+        help='Sales representative from employees',
         index=True
     )
     
@@ -87,6 +98,20 @@ class TargetTracking(models.Model):
         compute='_compute_pending_target',
         store=True
     )
+    
+    @api.model
+    def _get_default_date_from(self):
+        """Get the first day of the current month"""
+        today = datetime.today()
+        return today.replace(day=1).date()
+    
+    @api.model
+    def _get_default_date_to(self):
+        """Get the last day of the current month"""
+        today = datetime.today()
+        next_month = today.replace(day=1) + relativedelta(months=1)
+        last_day = next_month - relativedelta(days=1)
+        return last_day.date()
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
