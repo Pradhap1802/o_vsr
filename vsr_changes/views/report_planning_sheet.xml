@@ -46,20 +46,14 @@
                                 text-align: center;
                             }
                             .planning-table th {
-                                background-color: #90EE90;
                                 font-weight: bold;
                             }
                             .planning-table .product-col {
-                                background-color: #FFFF00;
                                 font-weight: bold;
                                 text-align: left;
                                 padding-left: 8px;
                             }
-                            .planning-table .stock-col {
-                                background-color: #90EE90;
-                            }
                             .planning-table .total-col {
-                                background-color: #90EE90;
                                 font-weight: bold;
                             }
                             .date-box {
@@ -110,13 +104,13 @@
                             <tbody>
                                 <t t-foreach="all_products" t-as="product">
                                     <t t-set="product_lines" t-value="o.line_ids.filtered(lambda l: l.product_id == product)"/>
-                                    <t t-set="stock_qty" t-value="product_lines[0].stocks_in_kgs if product_lines else 0"/>
+                                    <t t-set="stock_text" t-value="product_lines[0].stocks_in_kgs if product_lines else ''"/>
                                     <tr>
                                         <td class="product-col">
                                             <t t-esc="product.name"/>
                                         </td>
                                         <td class="stock-col">
-                                            <t t-esc="'%.0f' % stock_qty if stock_qty else ''"/>
+                                            <t t-esc="stock_text"/>
                                         </td>
                                         
                                         <!-- City quantities -->
@@ -136,6 +130,28 @@
                                         <td class="total-col"><t t-esc="'%.0f' % total_req if total_req else ''"/></td>
                                     </tr>
                                 </t>
+                                
+                                <!-- TOTAL ROW -->
+                                <tr style="font-weight: bold;">
+                                    <td class="product-col">TOTAL</td>
+                                    
+                                    <!-- Empty cell for Stocks in KGS (no total needed) -->
+                                    <td class="stock-col"></td>
+                                    
+                                    <!-- Total for each city column -->
+                                    <t t-foreach="all_cities" t-as="city">
+                                        <t t-set="city_total" t-value="sum(o.line_ids.filtered(lambda l: l.city == city).mapped('quantity'))"/>
+                                        <td><t t-esc="'%.0f' % city_total if city_total else ''"/></td>
+                                    </t>
+                                    
+                                    <!-- Grand Total Qty in Case -->
+                                    <t t-set="grand_total_qty" t-value="sum(o.line_ids.mapped('quantity'))"/>
+                                    <td class="total-col"><t t-esc="'%.0f' % grand_total_qty if grand_total_qty else ''"/></td>
+                                    
+                                    <!-- Grand Total Req Qty in KGS -->
+                                    <t t-set="grand_total_req" t-value="sum(o.line_ids.mapped('req_qty_in_kgs'))"/>
+                                    <td class="total-col"><t t-esc="'%.1f' % grand_total_req if grand_total_req else ''"/></td>
+                                </tr>
                             </tbody>
                         </table>
 

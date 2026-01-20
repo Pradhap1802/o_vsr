@@ -78,6 +78,7 @@ class PlanningSheet(models.TransientModel):
         if not planning_data:
             raise UserError(_('Confirmed sales orders were found for %s, but they do not contain any Storable or Consumable products to plan.') % self.date)
 
+
         # Create planning lines
         sequence = 10
         for (product, city), qty in planning_data.items():
@@ -86,10 +87,10 @@ class PlanningSheet(models.TransientModel):
                 'product_id': product.id,
                 'city': city,
                 'quantity': qty,
-                'stocks_in_kgs': product.qty_available,
                 'sequence': sequence,
             })
             sequence += 10
+
 
 class PlanningSheetLine(models.TransientModel):
     _name = 'planning.sheet.line'
@@ -102,29 +103,121 @@ class PlanningSheetLine(models.TransientModel):
     product_id = fields.Many2one('product.product', string='Product', required=True)
     city = fields.Char(string='City/Location', required=True)
     quantity = fields.Float(string='Quantity', default=0.0)
-    stocks_in_kgs = fields.Float(string='Stocks in KGS')
     
     # Computed fields
+    stocks_in_kgs = fields.Char(string='Stocks in KGS', compute='_compute_stocks_in_kgs', store=True)
     req_qty_in_kgs = fields.Float(string='Req Qty in KGS', compute='_compute_req_qty', store=True)
+    
+    @api.depends('product_id')
+    def _compute_stocks_in_kgs(self):
+        """Extract weight with unit from product name and display it in Stocks in KGS column"""
+        for line in self:
+            if not line.product_id:
+                line.stocks_in_kgs = ''
+                continue
+            
+            # Extract weight with unit from product name
+            line.stocks_in_kgs = self._extract_weight_with_unit(line.product_id.name)
+    
+    def _extract_weight_with_unit(self, name):
+        """
+        Extract weight with unit from product name.
+        Returns: string like '500 G', '1 KG', '2.5 KG', etc.
+        """
+        import re
+        if not name:
+            return ''
+        
+        name_upper = name.upper()
+        
+        # Define weight patterns to extract
+        weight_patterns = [
+            # KG patterns
+            (r'5\s*KG', '5 KG'),
+            (r'2\.5\s*KG', '2.5 KG'),
+            (r'1\s*KG', '1 KG'),
+            # Gram patterns
+            (r'500\s*G', '500 G'),
+            (r'300\s*G', '300 G'),
+            (r'200\s*G', '200 G'),
+            (r'100\s*G', '100 G'),
+            (r'60\s*G', '60 G'),
+            (r'30\s*G', '30 G'),
+            (r'7\s*G', '7 G'),
+        ]
+        
+        # Try to match each pattern
+        for pattern, display_text in weight_patterns:
+            if re.search(pattern, name_upper):
+                return display_text
+        
+        # Fallback: try to extract any KG value
+        kg_match = re.search(r'(\d+\.?\d*)\s*KG', name_upper)
+        if kg_match:
+            return f"{kg_match.group(1)} KG"
+        
+        # Fallback: try to extract any G value
+        g_match = re.search(r'(\d+\.?\d*)\s*G', name_upper)
+        if g_match:
+            return f"{g_match.group(1)} G"
+        
+        return ''
+    
+    
     
     @api.depends('quantity', 'product_id')
     def _compute_req_qty(self):
         for line in self:
-            if line.product_id and line.product_id.weight:
-                line.req_qty_in_kgs = line.quantity * line.product_id.weight
-            else:
-                # Try to extract weight from product name
-                weight = self._extract_weight_from_name(line.product_id.name if line.product_id else '')
-                line.req_qty_in_kgs = line.quantity * weight
+            if not line.product_id or not line.quantity:
+                line.req_qty_in_kgs = 0.0
+                continue
+            
+            # Extract weight and pieces per case from product name
+            weight_kg, pieces_per_case = self._extract_weight_and_pieces(line.product_id.name)
+            
+            # Calculate: Total Qty in Case × Weight in KG × Pieces per Case
+            line.req_qty_in_kgs = line.quantity * weight_kg * pieces_per_case
     
-    def _extract_weight_from_name(self, name):
-        """Extract weight from product name like 'MANGO PICKLE AS 5 KG'"""
+    def _extract_weight_and_pieces(self, name):
+        """
+        Extract weight from product name and return corresponding pieces per case.
+        Returns: (weight_in_kg, pieces_per_case)
+        """
         import re
         if not name:
-            return 0.0
+            return 0.0, 0
         
-        # Look for patterns like "5 KG", "2.5 Kg", etc.
-        match = re.search(r'(\d+\.?\d*)\s*[Kk][Gg]', name)
-        if match:
-            return float(match.group(1))
-        return 0.0
+        name_upper = name.upper()
+        
+        # Define weight patterns and their corresponding pieces per case
+        weight_mapping = [
+            # KG patterns
+            (r'5\s*KG', 5.0, 4),
+            (r'2\.5\s*KG', 2.5, 6),
+            (r'1\s*KG', 1.0, 12),
+            # Gram patterns
+            (r'500\s*G', 0.5, 24),
+            (r'300\s*G', 0.3, 40),
+            (r'200\s*G', 0.2, 60),
+            (r'100\s*G', 0.1, 90),
+            (r'60\s*G', 0.06, 160),
+            (r'30\s*G', 0.03, 40),
+            (r'7\s*G', 0.007, 1500),
+        ]
+        
+        # Try to match each pattern
+        for pattern, weight_kg, pieces in weight_mapping:
+            if re.search(pattern, name_upper):
+                return weight_kg, pieces
+        
+        # Fallback: try to extract any KG value
+        kg_match = re.search(r'(\d+\.?\d*)\s*KG', name_upper)
+        if kg_match:
+            return float(kg_match.group(1)), 1
+        
+        # Fallback: try to extract any G value
+        g_match = re.search(r'(\d+\.?\d*)\s*G', name_upper)
+        if g_match:
+            return float(g_match.group(1)) / 1000.0, 1
+        
+        return 0.0, 0
