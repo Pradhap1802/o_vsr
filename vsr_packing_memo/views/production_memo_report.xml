@@ -42,49 +42,49 @@
                     <t t-foreach="page_starts" t-as="page_start_val">
                         <div class="page" style="font-family: Calibri, Arial, sans-serif; font-size: 10px; page-break-after: always;">
                             
-                            <!-- Header Section (Shared for the page) -->
-                            <div style="margin-bottom: 5px;">
-                                <table style="width: 100%; border: none;">
-                                    <tr>
-                                        <td style="width: 60%; vertical-align: top;">
-                                            <table style="width: 100%; font-weight: bold;">
-                                                <tr>
-                                                    <td style="width: 100px; padding: 1px 0;">PRODUCT NAME</td>
-                                                    <td style="padding: 1px 0;">: <span t-field="o.product_id.name"/></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 1px 0;">TIME STARTED</td>
-                                                    <td style="padding: 1px 0;">: ____________________</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 1px 0;">TIME END</td>
-                                                    <td style="padding: 1px 0;">: ____________________</td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 1px 0;">MEMO NO</td>
-                                                    <td style="padding: 1px 0;">: <span t-field="o.memo_no"/></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 1px 0;">DATE</td>
-                                                    <td style="padding: 1px 0;">: <span t-esc="o.date_start.strftime('%d-%b-%y') if o.date_start else ''"/></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td style="width: 40%; vertical-align: top; text-align: right;">
-                                            <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                                                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 40px; margin-bottom: 2px;" alt="Company Logo"/>
-                                                <div style="font-weight: bold; font-size: 12px;">V.S.R AGRO PRODUCTS</div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <!-- Sensory Attributes (Only on First Page, Above Tables) -->
+                            <!-- Header Section (Only on First Page) -->
                             <t t-if="page_start_val == 0">
+                                <div style="margin-bottom: 5px;">
+                                    <table style="width: 100%; border: none;">
+                                        <tr>
+                                            <td style="width: 60%; vertical-align: top;">
+                                                <table style="width: 100%; font-weight: bold;">
+                                                    <tr>
+                                                        <td style="width: 100px; padding: 1px 0;">PRODUCT NAME</td>
+                                                        <td style="padding: 1px 0;">: <span t-field="o.product_id.name"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">TIME STARTED</td>
+                                                        <td style="padding: 1px 0;">: ____________________</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">TIME END</td>
+                                                        <td style="padding: 1px 0;">: ____________________</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">MEMO NO</td>
+                                                        <td style="padding: 1px 0;">: <span t-field="o.memo_no"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 1px 0;">DATE</td>
+                                                        <td style="padding: 1px 0;">: <span t-esc="o.date_start.strftime('%d-%b-%y') if o.date_start else ''"/></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 40%; vertical-align: top; text-align: right;">
+                                                <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                                                    <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 40px; margin-bottom: 2px;" alt="Company Logo"/>
+                                                    <div style="font-weight: bold; font-size: 12px;">V.S.R AGRO PRODUCTS</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <!-- Sensory Attributes (Only on First Page, Above Tables) -->
                                 <div style="margin-bottom: 10px;">
-                                    <h6 style="font-weight: bold; margin-bottom: 2px; font-size: 9px;">SENSORY ATTRIBUTES</h6>
-                                    <table class="table table-bordered table-sm" style="width: 100%; font-size: 9px; border: 1px solid black;">
+                                    <h6 style="font-weight: bold; margin-bottom: 2px; font-size: 15px;">SENSORY ATTRIBUTES</h6>
+                                    <table class="table table-bordered table-sm" style="width: 100%; font-size: 15px; border: 1px solid black;">
                                         <tr>
                                             <td style="width: 15%; font-weight: bold; padding: 1px;">Taste</td>
                                             <td style="width: 35%; padding: 1px;"><span t-field="o.taste"/></td>
@@ -120,7 +120,7 @@
                                                 width: 100%;
                                                 border-collapse: collapse;
                                                 border: 1px solid black;
-                                                font-size: 9px;
+                                                font-size: 15px;
                                             }
                                             .production-table th, .production-table td {
                                                 border: 1px solid black;
@@ -236,31 +236,32 @@
                                     </div>
                                 </t>
                             </t>
-
-                            <!-- Footer (Shared at bottom) -->
-                            <div style="break-inside: avoid;">
-
-                                <!-- Signatories -->
-                                <table style="width: 100%; border: none; font-size: 9px;">
-                                    <tr>
-                                        <td style="width: 33%; text-align: left;">
-                                            <div style="border-top: 1px solid black; width: 80%; padding-top: 2px;">
-                                                <strong>Prepared By</strong>
-                                            </div>
-                                        </td>
-                                        <td style="width: 33%; text-align: center;">
-                                            <div style="border-top: 1px solid black; width: 80%; margin: 0 auto; padding-top: 2px;">
-                                                <strong>Checked By</strong>
-                                            </div>
-                                        </td>
-                                        <td style="width: 33%; text-align: right;">
-                                            <div style="border-top: 1px solid black; width: 80%; margin-left: auto; padding-top: 2px; text-align: left; padding-left: 5px;">
-                                                <strong>Authorised Signatory</strong>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                            
+                            <!-- Signatory Section - Only on Last Page, After Last Table -->
+                            <t t-if="page_start_val == page_starts[-1]">
+                                <div style="break-inside: avoid; margin-top: 70px;">
+                                    <!-- Signatories -->
+                                    <table style="width: 100%; border: none; font-size: 15px;">
+                                        <tr>
+                                            <td style="width: 33%; text-align: left;">
+                                                <div style="border-top: 1px solid black; width: 80%; padding-top: 5px;">
+                                                    <strong>Prepared By</strong>
+                                                </div>
+                                            </td>
+                                            <td style="width: 33%; text-align: center;">
+                                                <div style="border-top: 1px solid black; width: 80%; margin: 0 auto; padding-top: 5px;">
+                                                    <strong>Checked By</strong>
+                                                </div>
+                                            </td>
+                                            <td style="width: 33%; text-align: right;">
+                                                <div style="border-top: 1px solid black; width: 80%; margin-left: auto; padding-top: 5px; text-align: left; padding-left: 5px;">
+                                                    <strong>Authorised Signatory</strong>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </t>
 
                         </div>
                     </t>
