@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_inherit_tally" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit.tally</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Tally" name="tally">
+                    <group>
+                        <group>
+                            <field name="x_studio_delivery_ref_no"/>
+                            <field name="x_studio_receipt_ref_no"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_order,access_sale_order,sale.model_sale_order,base.group_user,1,1,1,1
+access_purchase_order,access_purchase_order,purchase.model_purchase_order,base.group_user,1,1,1,1
+access_stock_picking,access_stock_picking,stock.model_stock_picking,base.group_user,1,1,1,1
+access_account_move,access_account_move,account.model_account_move,base.group_user,1,1,1,1
+access_account_payment,access_account_payment,account.model_account_payment,base.group_user,1,1,1,1
